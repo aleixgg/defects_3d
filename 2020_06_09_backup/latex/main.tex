@@ -1,0 +1,1077 @@
+\documentclass[letterpaper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amssymb,amsmath,amsfonts}
+\usepackage{amsthm}
+\usepackage[
+  pdfusetitle,
+  bookmarksnumbered,
+  hidelinks,
+  colorlinks,
+  citecolor=blue,
+  linktoc=page
+]{hyperref}
+\usepackage[backgroundcolor=white,linecolor=green!60]{todonotes}
+\usepackage{dsfont}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.15}
+
+% Keep figures in right section
+\usepackage{placeins}
+\let\Oldsection\section
+\renewcommand{\section}{\FloatBarrier\Oldsection}
+\let\Oldsubsection\subsection
+\renewcommand{\subsection}{\FloatBarrier\Oldsubsection}
+\let\Oldsubsubsection\subsubsection
+\renewcommand{\subsubsection}{\FloatBarrier\Oldsubsubsection}
+
+
+\newcommand\be{\begin{equation}}
+\newcommand\bea{\begin{eqnarray}}
+\newcommand\eea{\end{eqnarray}}
+\newcommand\ee{\end{equation}}
+
+\newcommand\eg{{\it e.g.}}
+\newcommand\ie{{\it i.e.}}
+\newcommand\cf{{\it cf.}}
+\newcommand\mf{\mathfrak}
+
+\def\Am{{\mathcal{A}}}
+\def\Bm{{\mathcal{B}}}
+\def\Cm{{\mathcal{C}}}
+\def\Dm{{\mathcal{D}}}
+\def\Em{{\mathcal{E}}}
+\def\Fm{{\mathcal{F}}}
+\def\Gm{{\mathcal{G}}}
+\def\Hm{{\mathcal{H}}}
+\def\Im{{\mathcal{I}}}
+\def\Km{{\mathcal{K}}}
+\def\Mm{{\mathcal{M}}}
+\def\Nm{{\mathcal{N}}}
+\def\Om{{\mathcal{O}}}
+\def\Pm{{\mathcal{P}}}
+\def\Qm{{\mathcal{Q}}}
+\def\Rm{{\mathcal{R}}}
+\def\Sm{{\mathcal{S}}}
+\def\Um{{\mathcal{U}}}
+\def\Xm{{\mathcal{X}}}
+
+\def\Mb{{\bar{M}}}
+\def\Qb{{\bar{Q}}}
+\def\Sb{{\bar{S}}}
+
+\def\a{{\alpha}}
+\def\b{{\beta}}
+\def\c{{\gamma}}
+\def\d{{\delta}}
+\def\ad{{\dot{\alpha}}}
+\def\bd{{\dot{\beta}}}
+\def\cd{{\dot{\gamma}}}
+\def\dd{{\dot{\delta}}}
+\def\jbar{{\bar{\jmath}}}
+
+\def\Xb{{\mathbf{X}}}
+\def\eps{\epsilon}
+\def\veps{\varepsilon}
+\def\ph{\phantom}
+\def\pd{\partial}
+\def\w{\omega}
+\def\wb{\bar{\omega}}
+\def\nn{\nonumber}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%Brackets
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\bra}[1]{\ensuremath{\left< #1\,\right|}}
+\newcommand{\ket}[1]{\ensuremath{\left|\, #1\right>}}
+\newcommand{\bracket}[2]{\ensuremath{\left< #1\, |\, #2\right>}}
+\newcommand{\glbracket}[2]{\ensuremath{\left< #1\, ,\, #2\right>}}
+\newcommand{\normalorder}[1]{:\, #1\,:}
+\newcommand{\melement}[3]{\ensuremath{\left< #1\left| \, #2\,\right| #3\right>}}
+\newcommand{\vev}[1]{\ensuremath{\melement{0}{#1}{0}}}
+\newcommand{\vac}[1]{\ensuremath{\left< \, #1\, \right>}}
+\newcommand{\expvalue}[2]{\ensuremath{\melement{#2}{#1}{#2}}}
+\newcommand{\com}[2]{\ensuremath{\left[ #1\, ,\, #2\right]}}
+\newcommand{\acom}[2]{\ensuremath{\left\{ #1\, ,\, #2\right\}}}
+\newcommand{\form}[2]{\ensuremath{\left( #1, #2\right)}}
+\newcommand{\Nc}{{\ensuremath{\mathcal{N}}}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%Algebra Letters
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\fS}{{\ensuremath{\mathsf{S}}}}\newcommand{\fP}{{\ensuremath{\mathsf{P}}}}
+\newcommand{\fQ}{{\ensuremath{\mathsf{Q}}}}\newcommand{\fL}{{\ensuremath{\mathsf{L}}}}
+\newcommand{\fK}{{\ensuremath{\mathsf{K}}}}\newcommand{\fD}{{\ensuremath{\mathsf{D}}}}
+\newcommand{\fq}{{\ensuremath{\mathsf{q}}}}\newcommand{\fr}{{\ensuremath{\mathsf{r}}}}
+\newcommand{\fs}{{\ensuremath{\mathsf{s}}}}\newcommand{\ft}{{\ensuremath{\mathsf{t}}}}
+\newcommand{\fu}{{\ensuremath{\mathsf{u}}}}
+
+\newcommand\zb{{\bar z}}
+\newcommand\dcox{h^{\vee}}
+
+\newcommand\qq{\mathbbmtt{Q}}
+\newcommand\q{\mathbbmtt{Q}\,_{1}}
+\newcommand\qd{\mathbbmtt{Q}\,_{2}}
+
+
+\newcommand\uf{{\mf{u}}}
+\newcommand\sof{{\mf{so}}}
+\newcommand\suf{{\mf{su}}}
+\newcommand\ospf{{\mf{osp}}}
+\newcommand\uspf{{\mf{usp}}}
+\newcommand\slf{{\mf{sl}}}
+\newcommand\ef{{\mf{e}}}
+\newcommand\gf{{\mf{g}}}
+\newcommand\hhf{{\mf{h}}}
+\newcommand\Rf{{\mf{R}}}
+
+\newcommand\SO{\mathrm{SO}}
+\newcommand\SU{\mathrm{SU}}
+\newcommand\USp{\mathrm{USp}}
+
+\def \uf{{\mf{u}}}
+\def \sof{{\mf{so}}}
+\def \suf{{\mf{su}}}
+\def \slf{{\mf{sl}}}
+\def \ef{{\mf{e}}}
+\def \gf{{\mf{g}}}
+\def \hhf{{\mf{h}}}
+\def \Rf{{\mf{R}}}
+
+
+% Lie Algebras
+\newcommand{\gl}{\ensuremath{\mathfrak{gl}}}%
+\newcommand{\so}{\ensuremath{\mathfrak{so}}}%
+\newcommand{\su}{\ensuremath{\mathfrak{su}}}%
+\newcommand{\osp}{\ensuremath{\mathfrak{osp}}}%
+\renewcommand{\sp}{\ensuremath{\mathfrak{sp}}}%
+\renewcommand{\sl}{\ensuremath{\mathfrak{sl}}}%
+ 
+% Other
+\def \ph{\phantom}
+\DeclareMathOperator{\tr}{tr}
+\DeclareMathOperator{\str}{str}
+% \DeclareMathOperator{\deg}{deg}
+% \newcommand{\dd}{\ensuremath{\mathrm{d}}} % Differential
+\newcommand{\px}{\ensuremath{\partial_x}} % Partial derivative w.r.t. x
+\newcommand{\pt}[2]{\ensuremath{\partial^{#1}_{#2}}} % Partial derivative w.r.t. theta
+\newcommand{\cc}{\ensuremath{\mathfrak c_2}} % Casimir eigenvalue
+
+% Allow to increase spacing in pmatrix
+\makeatletter
+\renewcommand*\env@matrix[1][\arraystretch]{%
+  \edef\arraystretch{#1}%
+  \hskip -\arraycolsep
+  \let\@ifnextchar\new@ifnextchar
+  \array{*\c@MaxMatrixCols c}}
+\makeatother
+
+%opening
+\title{Defects across dimensions}
+\author{}
+
+\begin{document}
+
+\maketitle
+
+\section{Superconformal algebra}
+
+We use the conventions from Bobev and friends \texttt{1503.02081}, which we now summarize.
+We work in euclidean signature, so upper and lower indices do not matter.
+The conformal algebra is:
+\begin{align}
+ [ D, P_\mu] & =   P_\mu, \\
+ [ D, K_\mu] & = - K_\mu, \\
+ [ K_\mu, P_\nu] & = 2 \left( \delta_{\mu\nu} D - M_{\mu\nu} \right), \\
+ [ M_{\mu\nu}, M_{\rho\sigma} ] & = -\delta_{\mu\rho} M_{\nu\sigma} \pm \ldots, \\
+ [ M_{\mu\nu}, P_\rho] & = - \delta_{\mu\rho} P_\nu + \delta_{\nu\rho} P_\mu, \\
+ [ M_{\mu\nu}, K_\rho] & = - \delta_{\mu\rho} K_\nu + \delta_{\nu\rho} K_\mu.
+\end{align}
+The supercharges transform as:
+\begin{align}
+ [D, Q^+_\a ] & = \tfrac{1}{2} Q^+_\a, \\
+ [D, Q^-_\ad] & = \tfrac{1}{2} Q^-_\ad, \\
+ [R, Q^+_\a ] & =  Q^+_\a, \\
+ [R, Q^-_\ad] & = -Q^-_\ad, \\
+ [K^\mu, Q^+_\a]  & = \Sigma^\mu_{\a\ad} S^{\ad +}, \\
+ [K^\mu, Q^-_\ad] & = \Sigma^\mu_{\a\ad} S^{\a  -}, \\
+ [M_{\mu\nu}, Q^+_\a]  & = (       m_{\mu\nu})_\a^{\ph \a\b}    Q^{+}_\b, \\
+ [M_{\mu\nu}, Q^-_\ad] & = (\tilde m_{\mu\nu})^\bd_{\ph \bd\ad} Q^{-}_\bd,
+\end{align}
+and
+\begin{align}
+ [D, S^{\ad+} ] & = - \tfrac{1}{2} S^{\ad+}, \\
+ [D, S^{\a -} ] & = - \tfrac{1}{2} S^{\a -}, \\
+ [R, S^{\ad+} ] & =  S^{\ad+}, \\
+ [R, S^{\a -} ] & = -S^{\a -}, \\
+ [P_\mu, S^{\ad+}] & = - \bar \Sigma_\mu^{\ad\a} Q^+_\a, \\
+ [P_\mu, S^{\a -}] & = - \bar \Sigma_\mu^{\ad\a} Q^-_\ad, \\
+ [M_{\mu\nu}, S^{\ad+}] & = - (\tilde m_{\mu\nu})^\ad_{\ph \ad\bd} S^{\bd+}, \\
+ [M_{\mu\nu}, S^{\a -}] & = - (       m_{\mu\nu})_\b ^{\ph \b\a}   S^{\b-}.
+\end{align}
+The anticommutators are:
+\begin{align}
+ \{ Q^+_\a, Q^-_\ad \}   & =      \Sigma^\mu_{\a\ad} P_\mu, \\
+ \{ S^{\ad+}, S^{\a-} \} & = \bar \Sigma^{\ad\a}_\mu K_\mu, \\
+ \{ S^{\ad+}, Q^-_\bd \} 
+   & = \delta^\ad_{\ph \ad\bd} \left(D + \frac{d-1}{2} R \right) 
+     -  (\tilde m_{\mu\nu})^\ad_{\ph \ad\bd} M_{\mu\nu}
+     + \ldots, \\
+ \{ S^{\a-}, Q^+_\b \} 
+   & = \delta^\a_{\ph \a\b} \left(D - \frac{d-1}{2} R \right) 
+     - (m_{\mu\nu})_\b^{\ph \b\a} M_{\mu\nu}
+     + \ldots.
+\end{align}
+The gamma matrices are defined from
+\begin{align}
+ & \Sigma_i \bar \Sigma_j + \Sigma_j \bar \Sigma_i = 2 \delta_{ij}, \\
+ & \bar \Sigma_i \Sigma_j + \bar \Sigma_j \Sigma_i = 2 \delta_{ij}, \\
+ & \bar \Sigma^{\ad\a}_\mu = \left( \Sigma^\mu_{\a\ad} \right)^*,
+\end{align}
+and then
+\begin{align}
+ m_{\mu\nu} & = \frac{1}{4} \left( 
+    \Sigma_\nu \bar \Sigma_\mu - 
+    \Sigma_\mu \bar \Sigma_\nu
+ \right), \\
+ \tilde m_{\mu\nu} & = \frac{1}{4} \left( 
+    \bar \Sigma_\mu \Sigma_\nu - 
+    \bar \Sigma_\nu \Sigma_\mu
+ \right).
+\end{align}
+
+The Casimir is
+\begin{align}
+ C_2 = 
+    D^2
+  - \frac12 \{ P_\mu, K^\mu \}
+  - \frac12 M_{\mu\nu} M^{\mu\nu}
+  - \frac12 R^2
+  + \frac12 [ S^{\ad+}, Q^-_\ad]
+  + \frac12 [ S^{\a-}, Q^+_\a].
+\end{align}
+Acting with it on an operator with quantum numbers $\Delta, \ell, r$ gives the eigenvalue
+\begin{align}
+ \lambda_C 
+ = \Delta (\Delta - d + 2)
+ + \ell(\ell + d - 2)
+ - \frac{r^2}{2}.
+\end{align}
+
+When we look at the particular case $d = 3$ we take indices $\mu,\nu = 1, 2, 3$ and build the gamma matrices from the Pauli matrices
+\begin{align}
+ \Sigma^1 = \sigma^1, \quad
+ \Sigma^2 = \sigma^2, \quad
+ \Sigma^3 = \sigma^3,
+\end{align}
+When we look at the particular case $d = 4$ we take indices $\mu,\nu = 1, 2, 3, 4$ and build the remaining matrix as
+\begin{align}
+ \Sigma^4 = i \mathds{1}_{2}.
+\end{align}
+
+\subsection{Action of generators on fields}
+
+We will consider two-point functions $\langle \phi_1(x_1) \phi_2(x_2) \rangle$, where $\phi_1$ is chiral and $\phi_2$ is antichiral
+\begin{align}
+ & [Q^+_\a,  \phi_1(0)] = 0, \\
+ & [Q^-_\ad, \phi_2(0)] = 0.
+\end{align}
+Consistency with the superconformal algebra fixes the $R$-charge in terms of the dimension:
+\begin{align}
+ & [D, \phi_1(0)] = \Delta_\phi, \\
+ & [D, \phi_2(0)] = \Delta_\phi, \\
+ & [R, \phi_1(0)] = \frac{2}{d-1} \Delta_\phi, \\
+ & [R, \phi_2(0)] = \frac{2}{d-1} \Delta_\phi.
+\end{align}
+The operators are translated as
+\begin{align}
+ \phi(x) = e^{x\cdot P} \phi(0) e^{-x\cdot P},
+\end{align}
+which implies the usual
+\begin{align}
+ [P_\mu, \phi(x)] & = \partial_\mu \phi(x), \\
+ [D, \phi(x)] & =  (x^\mu \partial_\mu + \Delta) \phi(x), \\
+ [M_{\mu\nu}, \phi(x)] & =  (x_\nu \partial_\mu - x_\mu \partial_\nu) \phi(x), \\
+ \ldots
+\end{align}
+The shortening condition implies
+\begin{align}
+ [Q^+_\a,   \phi_1(x_1)] & = 0, \\
+ [S^{\ad+}, \phi_1(x_1)] & = 0, \\
+ [Q^-_\ad,  \phi_2(x_2)] & = 0, \\
+ [S^{\a-},  \phi_2(x_2)] & = 0.
+\end{align}
+For the remaining $S$ generators we get
+\begin{align}
+ & [S^{\a-}, \phi_1(x_1)]
+ = x_1^\mu \bar \Sigma_\mu^{\ad\a} [Q^-_\ad, \phi_1(x_1)], \\
+ & [S^{\ad+}, \phi_2(x_2)]
+ = x_2^\mu \bar \Sigma_\mu^{\ad\a} [Q^+_\a,  \phi_2(x_2)].
+\end{align}
+
+\section{Half-BPS boundaries}
+
+\subsection{Non-supersymmetric}
+
+We can obtain a subalgebra restricting to
+\begin{align}
+ D, \quad
+ R, \quad
+ M_{ab}, \quad
+ P_{a}, \quad
+ K_{a},
+\end{align}
+where $a,b = 1, \ldots, d-1$ are parallel to the boundary, which sits at $x^d = 0$.
+The defect Casimir is obtained from the full one restricting to the defect operators
+\begin{align}
+ C_{\text{def}} = 
+    D^2
+  - \frac12 \{ P_{a}, K^{a} \}
+  - \frac{1}{2} M_{ab} M^{ab}
+\end{align}
+The Ward identities fix the two-point function
+\begin{align}
+ \langle \phi_1(x_1) \phi_2(x_2) \rangle
+ = \frac{f(\xi)}{(2x_1^d)^{\Delta_1} (2x_2^d)^{\Delta_2}}, \qquad
+ \xi = \frac{x_{12}^2}{4 x_1^{d} x_2^{d}}.
+\end{align}
+
+\subsubsection{Defect channel}
+
+Acting with the bosonic part of the defect Casimir and using the non-supersymmetric Casimir $\lambda = \Delta(\Delta - d + 1)$ we get in general dimension
+\begin{align}
+ \frac{
+ \left( C_{\text{def,bos}} - \lambda \right) \langle \phi_1(x_1) \phi_2(x_2)\rangle
+ }{\langle \phi_1(x_1) \phi_2(x_2)\rangle}
+ = \xi  (\xi +1) f''(\xi ) 
+ + \frac{d}{2} (2 \xi +1) f'(\xi )
+ - \Delta (\Delta - d + 1) f(\xi )
+ = 0,
+\end{align}
+so the defect block that solves this is
+\begin{align}
+ f_\Delta(\xi) =
+ \xi ^{-\Delta } \, _2F_1\left(\Delta ,\Delta-\frac{d}{2} + 1;2 \Delta -d + 2; -\frac{1}{\xi }\right).
+\end{align}
+
+\subsubsection{Bulk channel}
+
+We should act with the full Casimir. 
+The bosonic differential equation is
+\begin{align}
+\begin{split}
+ \frac{
+ \left( C_{\text{bulk,bos}} - \lambda \right) \langle \phi_1(x_1) \phi_2(x_2)\rangle
+ }{\langle \phi_1(x_1) \phi_2(x_2)\rangle}
+ & = 4 \xi ^2 (\xi +1) f''(\xi )
+   + \big( 4 (2 \Delta_\phi+1) \xi  (\xi +1) - 2 d \xi \big) f'(\xi ) \\
+ & \quad 
+   +  \big(-\Delta(\Delta -d)-2 d \Delta_\phi+4 \Delta_\phi^2 (\xi +1)\big) f(\xi )
+   = 0,
+\end{split}
+\end{align}
+where the bosonic eigenvalue is $\lambda = \Delta(\Delta - d)$.
+The block is usually written in terms of $G(\xi) = \xi^{\Delta_\phi} f(\xi)$ because the dependance on the external dimensions drops:
+\begin{align}
+ G_\Delta(\xi)
+ = \xi ^{\Delta /2} \, _2F_1\left(
+    \frac{\Delta}{2},
+    \frac{\Delta}{2};
+    \Delta -\frac{d}{2} + 1;
+    -\xi 
+ \right).
+\end{align}
+
+
+\subsection{\texorpdfstring{$\Nm = (2, 0)$}{N=(2,0)} subalgebra 
+for \texorpdfstring{$d = 3$}{d=3}}
+
+We can obtain a subalgebra restricting to
+\begin{align}
+ D, \quad
+ R, \quad
+ M_{12}, \quad
+ P_1, P_2, \quad
+ K_1, K_2, \quad
+ Q^+_1, Q^-_2, \quad
+ S^{1-}, S^{2+}.
+\end{align}
+This can be mapped to the $(2,0)$ algebra in $2d$.
+The defect Casimir is obtained from the full one restricting to the defect operators
+\begin{align}
+ C_{\text{def}} = 
+    D^2
+  - \frac12 \{ P_{a}, K^{a} \}
+  - M_{12}^2
+  - \frac12 R^2
+  + \frac12 [ S^{2+}, Q^-_2]
+  + \frac12 [ S^{1-}, Q^+_1].
+\end{align}
+Acting with it on an operator with quantum numbers $\Delta, \ell, r$ gives the eigenvalue:
+\begin{align}
+ \lambda_C 
+ = \Delta (\Delta - 1)
+ + \ell(\ell - 1)
+ - \frac{r^2}{2}.
+\end{align}
+
+
+\subsubsection{Defect channel}
+
+We should act with the defect Casimir at position $x_1$. 
+The new contribution from susy is 
+\begin{align}
+ C_{\text{ferm}} =
+ - \frac{1}{2} R^2 
+ + \frac{1}{2} [S^{2+}, Q^-_2] 
+ + \frac{1}{2} [S^{1-}, Q^+_1] 
+ = - Q^-_2 S^{2+} 
+   + S^{1-} Q^+_1 
+   - \frac{1}{2} R^2 
+   + R.
+\end{align}
+Acting on one point and using the chirality of $\phi_1$ we get
+\begin{align}
+\begin{split}
+ [C_{\text{ferm}}, \phi_1(x_1) ] |0\rangle
+ & = \left( -\frac{1}{2} \Delta_\phi^2 + \Delta_\phi \right) \phi_1(x_1) |0\rangle.
+\end{split}
+\end{align}
+This suggests that to obtain the supersymmetric block we should just add a term
+$( -\frac{1}{2} \Delta_\phi^2 + \Delta_\phi ) f(\xi)$ in the Casimir equation.
+Consider a superprimary $\hat \Om_{p}$ of dimension $\Delta$, spin $\ell = 1/2$ and charge $r = r_\phi - 1$, which has Casimir
+\begin{align}
+ \lambda 
+ = \Delta(\Delta-1) + \ell(\ell - 1) - \frac{r^2}{2} 
+ = \Delta(\Delta-1) -\frac{1}{2} \Delta_\phi^2 + \Delta_\phi - \frac{3}{4}.
+\end{align}
+Then only the descendant $Q^+_{1} \hat \Om_{p}$ has the right quantum numbers to appear in the defect OPE $\phi \sim Q^+_{1} \hat \Om_{p}$, so the superconformal block should reduce to a single non-supersymmetric block.
+Indeed, in the differential equation all $\Delta_\phi$ terms drop and we get
+\begin{align}
+ \xi  (\xi +1) f''(\xi )+\frac{3}{2} (2 \xi +1) f'(\xi )
+ -\left(\Delta + \frac{1}{2} \right) \left( \Delta + \frac{1}{2} - 2 \right) f(\xi ) = 0,
+\end{align}
+which is solved by a shifted non-supersymmetric block $f_{\Delta+\frac{1}{2}}(\xi)$ as expected.
+
+
+\subsubsection{Bulk channel}
+
+We should act with the full Casimir.
+The only new contributions from susy are
+\begin{align}
+ C_{\text{ferm}} =
+ \frac{1}{2} [S^{\ad+}, Q^-_\ad] + 
+ \frac{1}{2} [S^{\a-}, Q^+_\a] =
+ -Q^-_\ad S^{\ad+} + S^{\ad-} Q^+_\a + 2R.
+\end{align}
+There is a contribution $-\frac12 R^2$ that cancels between the two sides of the Casimir equation.
+Acting on the two points we get
+\begin{align}
+\begin{split}
+ [C_{\text{ferm}}, & \phi_1(x_1) \phi_2(x_2) ] |0\rangle \\
+ & =
+ \left( 
+    [S^{\a-},  \phi_1(x_1)] [Q^+_\a,   \phi_2(x_2)]
+  - [Q^-_\ad,  \phi_1(x_1)] [S^{\ad+}, \phi_2(x_2)]
+  + 4 \Delta_\phi \, \phi_1(x_1) \phi_2(x_2)
+ \right) |0\rangle \\
+ & = 
+ \left(
+    x_{12}^\mu \bar \Sigma_\mu^{\ad\a} [Q^-_\ad, \phi_1(x_1)] [Q^+_\a, \phi_2(x_2)]
+  + 4 \Delta_\phi \, \phi_1(x_1) \phi_2(x_2)
+ \right) |0\rangle
+\end{split}
+\end{align}
+We use Ward identities to figure them out.
+We are only allowed to use $Q^+_1$, $Q^-_2$, $S^{1-}$, $S^{2+}$ to get Ward identities, because they are the only supercharges preserved by our defect.
+The first Ward identity
+\begin{align}
+ \langle \{ Q_1^+, [Q_\ad^-, \phi_1(x_1)] \phi_2(x_2) \} \rangle = 0
+\end{align}
+implies
+\begin{align}
+ \langle [Q_\ad^-, \phi_1(x_1)] [Q_1^+, \phi_2(x_2)] \rangle 
+ & = \langle [ \{Q_1^+, Q_\ad^-\}, \phi_1(x_1)] \phi_2(x_2) \rangle \\
+ & = \Sigma^\mu_{1\ad} \partial_\mu^{x_1} \langle \phi_1(x_1) \phi_2(x_2) \rangle. 
+\end{align}
+% Explicitly
+% \begin{align}
+%  \langle [Q_1^-, \phi_1(x_1)] [Q_1^+, \phi_2(x_2)] \rangle 
+%  & = -i \partial_2^{x_1} \langle \phi_1(x_1) \phi_2(x_2) \rangle \\
+%  \langle [Q_2^-, \phi_1(x_1)] [Q_1^+, \phi_2(x_2)] \rangle 
+%  & = \left( -i \partial_0^{x_1} - \partial_1^{x_1} \right) 
+%      \langle \phi_1(x_1) \phi_2(x_2) \rangle.
+% \end{align}
+We can play the same game with the other $Q^\pm$ and $S^\pm$ preserved by the defect.
+% The second Ward identity
+% \begin{align}
+%  \langle \{ Q_2^-, \phi_1(x_1) [Q_2^+, \phi_2(x_2)] \} \rangle = 0
+% \end{align}
+% implies
+% \begin{align}
+%  \langle [Q_2^-, \phi_1(x_1)] [Q_2^+, \phi_2(x_2)] \rangle 
+%  = - i \partial_2^{x_2} \langle \phi_1(x_1) \phi_2(x_2) \rangle.
+% \end{align}
+% The third Ward identity
+% \begin{align}
+%  \langle [ S^{2+}, (Q_1^- \phi_1(x_1)) \phi_2(x_2) ] \rangle = 0
+% \end{align}
+% is a bit more complicated, and it implies
+% \begin{align}
+%  \langle [Q_1^-, \phi_1(x_1)] [Q_2^+, \phi_2(x_2)] \rangle 
+%  = \frac{1}{x_2^2} \left[ 
+%  \left( i x_{12}^0 - x_{12}^1 \right) \partial_2^{x_1}
+%  - x_1^2 \left( i \partial_0^{x_1} - \partial_1^{x_1} \right)
+%  \right] \langle \phi_1(x_1) \phi_2(x_2) \rangle.
+% \end{align}
+% All in all we get (we use notation $x^\mu_i$ where $i$ labels point and $\mu=0,1,2$)
+% \begin{align}
+%  - x_1^2 \partial_2^{x_2}
+%  - x_2^2 \partial_2^{x_1}
+%  - \frac{1}{x_1^2} \left[
+%       ((x_{12}^0)^2 + (x_{12}^1)^2) \partial_2^{x_2}
+%     + x_{12}^0 \partial_0^{x_2} + x_{12}^1 \partial_1^{x_2}
+%     + i (x_{12}^0 \partial_1^{x_2} - x_{12}^1 \partial_0^{x_2})
+%  \right]
+%  + 4 \Delta_\phi
+% \end{align}
+All in all, when we act with the fermionic part of the Casimir on the two-point function we get
+\begin{align}
+ % 4 \xi  (\xi +1) f'(\xi )+2 \Delta_\phi (2 \xi +1) f(\xi )
+ \frac{C_{\text{bulk,ferm}}\langle \phi_1(x_1) \phi_2(x_2)\rangle}
+      {\langle \phi_1(x_1) \phi_2(x_2)\rangle}
+ = 
+ 4 \xi  (\xi +1) f'(\xi )+4 \Delta_\phi (\xi +1) f(\xi ).
+\end{align}
+It is fairly non-trivial to get a differential operator that acting on the two-point function can be rewritten in terms of $\xi$.
+This is a sanity check for our calculation.
+The supersymmetric Casimir eigenvalue is $\lambda = \Delta(\Delta-1) = \lambda_{bos} + 2\Delta$, so we should also add a term $-2 \Delta f(\xi)$ to the LHS.
+Adding all the contributions we get
+\begin{align}
+\begin{split}
+    4 \xi ^2 (\xi +1) f''(\xi )
+& + 2 \xi  (4 \Delta_\phi (\xi +1) + 4 \xi +1) f'(\xi ) \\
+& + \left(
+     2 \Delta_\phi (2 \Delta_\phi (\xi +1)+2 \xi -1) -\Delta(\Delta-1)
+   \right) f(\xi ) 
+ = 0.
+\end{split}
+\end{align}
+If we define $G(\xi) = \xi^{\Delta_\phi} f(\xi)$ the dependence on $\Delta_\phi$ drops
+\begin{align}
+   4 \xi ^2 (\xi +1)  G''(\xi )
+ + 2 \xi (4 \xi +1)   G' (\xi )
+ - \Delta (\Delta -1) G  (\xi ) = 0,
+\end{align}
+and we find the solution
+\begin{align}
+ G(\xi) = \xi ^{\Delta /2} \, _2F_1\left(\frac{\Delta }{2}+1,\frac{\Delta }{2};\Delta +\frac{1}{2};-\xi \right),
+\end{align}
+which is exactly what Philine already found!
+
+
+
+\subsection{\texorpdfstring{$\Nm = (1, 1)$}{N=(1,1)} subalgebra
+for \texorpdfstring{$d = 3$}{d=3}}
+
+We can obtain a subalgebra restricting to
+\begin{align}
+ D, \quad
+ M_{12}, \quad
+ P_1, P_2, \quad
+ K_1, K_2, \quad
+ Q^+_1 + Q^-_2, Q^+_2 + Q^-_1, \quad
+ S^{1+} + S^{2-}, S^{2+} + S^{1-}.
+\end{align}
+This can be mapped to the $(1,1)$ algebra in $2d$.
+The defect Casimir now changes a bit
+\begin{align}
+ C_{\text{def}} = 
+    D^2
+  - \frac12 \{ P_{a}, K^{a} \}
+  - M_{12}^2
+  + \frac14 [ S^{2+} + S^{1-}, Q^+_1 + Q^-_2]
+  + \frac14 [ S^{1+} + S^{2-}, Q^+_2 + Q^-_1].
+\end{align}
+Acting with it on an operator with quantum numbers $\Delta, \ell$ gives the eigenvalue:
+\begin{align}
+ \lambda_C 
+ = \Delta (\Delta - 1)
+ + \ell^2.
+\end{align}
+
+
+\subsubsection{Defect channel}
+
+The fermionic contribution to the Casimir equation is
+\begin{align}
+    \frac14 [ S^{2+} + S^{1-}, Q^+_1 + Q^-_2]
+  + \frac14 [ S^{1+} + S^{2-}, Q^+_2 + Q^-_1]
+  \to R - \frac{1}{2} \left( 
+    Q_2^- S^{1-} + Q_1^- S^{2-}
+  \right) + \ldots,
+\end{align}
+where we dropped all terms that vanish when acting on $\phi_1(x_1)$:
+\begin{align}
+ [C_{\text{def,ferm}}, \phi_1(x_1)] |0\rangle 
+ = \left( \Delta_\phi \phi_1(x_1) + x_1^3 \{ Q_1^-, [Q_2^-, \phi_1(x_1)]\} \right)|0\rangle.
+\end{align}
+Using Ward identities we express $Q_1^- Q_2^-$ as a differential operator acting at $x_1$, and we get
+\begin{align}
+ \frac{C_{\text{bulk,ferm}} \langle \phi_1(x_1) \phi_2(x_2) \rangle}
+      {\langle \phi_1(x_1) \phi_2(x_2) \rangle}
+ = -\xi  f'(\xi).
+\end{align}
+We also need a contribution $-\Delta f(\xi)$ from the difference in the Casimir eigenvalue, so
+\begin{align}
+   \xi  (\xi +1) f''(\xi )
+ + \left(2 \xi +\frac{3}{2}\right) f'(\xi )
+ - \Delta  (\Delta -1)f(\xi )
+ = 0.
+\end{align}
+This is solved by the same block Philine found:
+\begin{align}
+ f(\xi) 
+ = \xi ^{-\Delta } \, _2F_1\left(\Delta ,\frac{1}{2} (2 \Delta -1);2 \Delta ;-\frac{1}{\xi }\right).
+\end{align}
+
+
+\subsubsection{Bulk channel}
+
+The bosonic part and supersymmetric parts are the same as before, the only difference are the Ward identites we can use to rewrite $\langle Q\phi Q\phi \rangle$ in terms of derivatives of $\langle \phi \phi \rangle$.
+As before, we can only use the preserved supercharges, so the Ward identities are
+\begin{align}
+\begin{split}
+ \langle \{ Q^+_1 + Q^-_2, [Q^-_2, \phi_1] \phi_2 \} \rangle & = 0, \\
+ \langle \{ Q^+_2 + Q^-_1, [Q^-_1, \phi_1] \phi_2 \} \rangle & = 0, \\
+ \ldots
+\end{split}
+\end{align}
+% They imply
+% \begin{align}
+% \begin{split}
+%  \langle [Q^-_2, \phi_1] [Q^+_1, \phi_2] \rangle 
+%  & = (-i \partial_0^{x_1} - \partial_1^{x_1}) \langle \phi_1 \phi_2 \rangle, \\
+%  \langle [Q^-_1, \phi_1] [Q^+_2, \phi_2] \rangle 
+%  & = (-i \partial_0^{x_1} + \partial_1^{x_1}) \langle \phi_1 \phi_2 \rangle, \\
+% \end{split}
+% \end{align}
+All in all we get:
+\begin{align}
+ \frac{C_{\text{bulk,ferm}} \langle \phi_1(x_1) \phi_2(x_2) \rangle}
+      {\langle \phi_1(x_1) \phi_2(x_2) \rangle}
+ = 4 \xi  f'(\xi )
+ + 4 \Delta_\phi f(\xi ).
+\end{align}
+Following the same arguments as before, we find the blocks
+\begin{align}
+ G(\xi) 
+ = \xi ^{\Delta /2} \, _2F_1\left(\frac{\Delta }{2},\frac{\Delta }{2};\Delta +\frac{1}{2};-\xi \right),
+\end{align}
+consistent with Philine's results once more!
+
+\subsection{\texorpdfstring{$OSp(1|4)$}{OSP(1|4)} subalgebra
+for \texorpdfstring{$d = 4$}{d=4}}
+
+We can obtain a subalgebra restricting to
+\begin{align}
+ D, \quad
+ M_{12}, M_{13}, M_{23}, \quad
+ P_1, P_2, P_3, \quad
+ K_1, K_2, K_3, \quad
+ Q^+_1 + Q^-_2, Q^+_2 - Q^-_1, \quad
+ S^{1+} - S^{2-}, S^{2+} + S^{1-}.
+\end{align}
+This can be mapped to the $OSp(1|4)$ algebra in $3d$.
+The defect Casimir now changes a bit
+\begin{align}
+ C_{\text{def}} = 
+    D^2
+  - \frac12 \{ P_{a}, K^{a} \}
+  - \frac12 M_{ab} M^{ab}
+  + \frac14 [ S^{2+} + S^{1-}, Q^+_1 + Q^-_2]
+  - \frac14 [ S^{1+} - S^{2-}, Q^+_2 - Q^-_1].
+\end{align}
+We are using $a, b = 1, 2, 3$ and the boundary sits at $x^4 = 0$.
+Acting with it on an operator with quantum numbers $\Delta, \ell$ gives the eigenvalue:
+\begin{align}
+ \lambda_C 
+ = \Delta (\Delta - 2)
+ + \ell(\ell + 1).
+\end{align}
+
+\subsubsection{Defect channel}
+
+The relevant part of the Casimir is
+\begin{align}
+ C_{\text{def,ferm}} = - \frac12 Q_2^- S^{1-} + \frac12 Q_1^- S^{2-} + \frac32 R + \ldots,
+\end{align}
+which acting at point 1 gives
+\begin{align}
+ [C_{\text{def,ferm}}, \phi_1(x_1)] |0 \rangle
+ = \left[ x_1^3 \{ Q_1^-, [Q_2^-, \phi_1(x_1)] \} + \Delta_\phi \phi_1(x_1)
+ \right] | 0 \rangle.
+\end{align}
+Using Ward identities we find
+\begin{align}
+ \frac{C_{\text{def,ferm}} \langle \phi_1(x_1) \phi_2(x_2) \rangle}
+      {\langle \phi_1(x_1) \phi_2(x_2) \rangle}
+ = - \xi  f'(\xi ).
+\end{align}
+This is the same as the $\Nm = (1, 1)$ boundary in $3d$.
+
+\subsubsection{Bulk channel}
+
+It works as before, but the Ward identities are different. The result is
+\begin{align}
+ \frac{C_{\text{bulk,ferm}} \langle \phi_1(x_1) \phi_2(x_2) \rangle}
+      {\langle \phi_1(x_1) \phi_2(x_2) \rangle}
+ = 4 \xi  f'(\xi )
+ + 4 \Delta_\phi f(\xi ).
+\end{align}
+This is once again the same as for the $\Nm = (1, 1)$ boundary in $3d$.
+
+\subsection{Boundary across dimensions}
+
+We conjecture that the fermionic part of the Casimir gives the same contribution regardless of the dimension $2 \le d \le 4$. 
+(We should still check the boundary in $2d$, but it probably also works there)
+Combining the bosonic and supersymmetric parts we get blocks ``across dimensions''.
+
+\subsubsection{Defect channel}
+
+The solution is
+\begin{align}
+\begin{split}
+ f_\Delta^{\text{SUSY}}(\xi) 
+ & = \xi ^{-\Delta } \, _2F_1\left(\Delta ,\frac{1}{2} (2 \Delta + 2-d);2 \Delta +3-d;-\frac{1}{\xi }\right) \\
+ & = f_\Delta(\xi) + \frac{\Delta }{4\Delta - 2d + 6} f_{\Delta+1}(\xi).
+\end{split}
+\end{align}
+
+
+\subsubsection{Bulk channel}
+
+The solution is
+\begin{align}
+\begin{split}
+ G_\Delta^{\text{SUSY}}(\xi) 
+ & = \xi ^{\Delta /2} \, _2F_1\left(\frac{\Delta }{2},\frac{\Delta }{2};\Delta +2 -\frac{d}{2};-\xi \right) \\
+ & = G_\Delta(\xi) 
+   + \frac{\Delta ^2}{(2 \Delta -d +2) (2 \Delta -d +4)} G_{\Delta+2}(\xi).
+\end{split}
+\end{align}
+
+\section{Codimension two objects}
+
+\subsection{Non-supersymmetric}
+
+We can obtain a subalgebra restricting to
+\begin{align}
+ D, \quad
+ R, \quad
+ P_{a}, \quad
+ K_{a}, \quad
+ M_{ab}, \quad
+ M_{ij}.
+\end{align}
+where $a,b = 1, \ldots, p$ live on the defect and $i,j= p+1, \ldots, d$ are orthogonal. Also $p$ is the dimension of the defect and $q  = d-p$ is the codimension.
+The defect Casimir is obtained from the full one restricting to the defect operators.
+It factorizes into two commuting pieces
+\begin{align}
+ C_{\text{def}, 1} = 
+    D^2
+  - \frac12 \{ P_{a}, K^{a} \}
+  - \frac{1}{2} M_{ab} M^{ab}, \qquad
+ C_{\text{def}, 2} 
+  = - \frac{1}{2} M_{ij} M^{ij}.
+\end{align}
+The Ward identities fix the two-point function but now there are two cross-ratios
+\begin{align}
+ \langle \phi_1(x_1) \phi_2(x_2) \rangle
+ = \frac{f(\xi, \eta)}{|x_1^\bot|^{\Delta_1} |x_2^\bot|^{\Delta_2}}, \qquad
+ \xi = \frac{x_{12}^2}{|x_1^{\bot}| |x_2^{\bot}|}, \qquad
+ \eta = \frac{x_{1}^\bot \cdot x_2^\bot}{|x_1^{\bot}| |x_2^{\bot}|}.
+\end{align}
+For the defect channel we will also use 
+\begin{align}
+ \chi = \frac{ x_{12}^2 + 2 x_1^\bot \cdot x_2^\bot}
+             { |x_1^\bot| |x_2^\bot| } .
+\end{align}
+In the defect channel, using the normalization of Billo and friends, we get
+\begin{align}
+ f(\chi, \eta) 
+ \to \chi^{-\Delta} \,
+ 2^{-s}
+ \begin{pmatrix}
+  s+ \frac{q}{2} -2 \\
+  \frac{q}{2} -2
+ \end{pmatrix}^{-1}
+ C_{s}^{q/2-1}(\eta) 
+ \qquad \text{as} \qquad
+ \chi \to \infty.
+\end{align}
+
+
+
+\subsubsection{Defect channel}
+
+The action of the conformal group gives, with $\lambda = \Delta(\Delta-p)$:
+\begin{align}
+ \frac{(C_{\text{def,1}} - \lambda) \langle \phi_1(x_1) \phi_2(x_2) \rangle}
+      {\langle \phi_1(x_1) \phi_2(x_2) \rangle}
+ = (\chi^2 - 4) f''(\chi) + (p+1) \chi f'(\chi) - \Delta(\Delta-p) f(\chi)
+ = 0.
+\end{align}
+The action of transverse rotations gives, with $\lambda = s(s + q - 2)$:
+\begin{align}
+ \frac{(C_{\text{def,2}} - \lambda) \langle \phi_1(x_1) \phi_2(x_2) \rangle}
+      {\langle \phi_1(x_1) \phi_2(x_2) \rangle}
+ = (\eta^2 - 1) f''(\eta) + (q-1) \eta f'(\eta) - s(s+q-2) f(\eta)
+ = 0.
+\end{align}
+In total the block is
+\begin{align}
+ \hat f_{\Delta,s}(\chi,\eta) 
+ = \alpha_{s,q} \chi ^{-\Delta } 
+ \, _2F_1\left(\frac{\Delta }{2},\frac{\Delta +1}{2};\Delta+1-\frac{p}{2};\frac{4}{\chi ^2}\right)
+ \, _2F_1\left(-\frac{s}{2},\frac{q+s-2}{2};\frac{q-1}{2};1-\eta ^2\right),
+\end{align}
+with normalization
+\begin{align}
+ \alpha_{s,q} = 2^{-s} \frac{\Gamma(q+s-2) \Gamma(q/2-1)}{\Gamma(q/2+s-1) \Gamma(q-2)}.
+\end{align}
+
+
+\subsubsection{Bulk channel}
+
+\subsection{Non-supersymmetric with \texorpdfstring{$U(1)$}{U(1)} mixing}
+
+Let's imagine we have an extra non-compact $U(1)_R$ symmetry with an Hermitian generator $R$.
+Then for codimension-two defect, the transverse rotations $SO(2) \simeq U(1)$ can mix with the $U(1)_R$ symmetry
+\begin{align}
+ M_{12} + i R
+\end{align}
+(We can always normalize the $R$ generator such that the above equation holds).
+The second Casimir is modified to
+\begin{align}
+C_{\text{def},2} = - (M_{12} + i R)^2.
+\end{align}
+
+\subsubsection{Bulk-defect correlator in \texorpdfstring{$3d$}{3d}}
+
+Consider
+\begin{align}
+ \langle \phi(x_1) \hat \Om(x_2) \rangle
+\end{align}
+Using $P_3$ it can depend on
+\begin{align}
+ x_1^1, \quad
+ x_1^2, \quad
+ x_{12}^3
+\end{align}
+Using $M_{12}$ we find that $r_1 = r_2 + s_2$ and 
+\begin{align}
+ (x_1^\perp)^2, \quad
+ x_{12}^3
+\end{align}
+Using dilatations and $K_3$ (and assuming $s_2 = 0$) we find the usual expression
+\begin{align}
+ \langle \phi(x_1) \hat \Om(x_2) \rangle
+ = \frac{1}{[(x_1^\perp)^2 + (x_{12}^3)^2]^{\Delta_2}
+ |x_1^\perp|^{\Delta_1 - \Delta_2}} 
+\end{align}
+Could we have $s_2 \ne 0$?!?
+
+\subsubsection{Defect channel}
+
+Since we assume (from the previous discussion) that the exchanged operator has $r = r_1$ and $s = 0$ the first Casimir equation is the same as before, and the second gives
+\begin{align}
+ \frac{(C_{\text{def,2}} - \lambda) \langle \phi_1(x_1) \phi_2(x_2) \rangle}
+      {\langle \phi_1(x_1) \phi_2(x_2) \rangle}
+ = (\eta^2 - 1) f''(\eta) + (\eta + 2r \sqrt{\eta^2-1}) f'(\eta)
+ = 0.
+\end{align}
+The contribution from $R^2$ cancels from the eigenvalue part, and $s$ does not contribute by assumption (is this correct?!).
+Here we assume $\eta \ge 1$, or in another set of coordinates
+\begin{align}
+ \eta = \frac{1}{2} \left( w + \frac{1}{w} \right), \qquad
+ 0 < w < 1.
+\end{align}
+In these coordinates the block reads
+\begin{align}
+ f(w) = c_1 w^{2r} + c_2,
+\end{align}
+where the constants $c_i$ should be fixed by consistency with the OPE.
+
+
+
+\subsection{Line defect in \texorpdfstring{$3d$}{3d}}
+
+We can obtain a subalgebra restricting to
+\begin{align}
+ D, \quad
+ P_3, \quad
+ K_3, \quad
+ -iM_{12} + R, \quad
+ Q^+_1, Q^-_1 \quad
+ S^{1+}, S^{1-}.
+\end{align}
+This can be mapped to the $\Nm = 2$ algebra in $1d$ (the left-moving part of the $\Nm = (2,0)$ algebra in $2d$).
+It is natural that $M_{12}$ appears with an extra factor of $i$ compared to $R$, since in our conventions $M_{12}$ is anti-hermitian while $R$ is hermitian.
+The defect Casimir now changes a bit
+\begin{align}
+ C_{\text{def}} = 
+    D^2
+  - \frac12 \{ P_{3}, K^{3} \}
+  - (-iM_{12} + R)^2
+  + \frac12 [ S^{1+}, Q^-_1]
+  + \frac12 [ S^{1-}, Q^+_1].
+\end{align}
+Acting with it on an operator with quantum numbers $\Delta, \ell$, where $\ell$ is the eigenvalue of $-i M_{12} + R$ gives the eigenvalue:
+\begin{align}
+ \lambda_C 
+ = \Delta^2
+ - \ell^2.
+\end{align}
+
+\subsubsection{Defect channel}
+
+The new contribution from susy is
+\begin{align}
+\begin{split}
+ C_{\text{def, ferm}} 
+ & = 
+  - (-i M_{12} + R)^2
+  + \frac12 [ S^{1+}, Q^-_1]
+  + \frac12 [ S^{1-}, Q^+_1] \\
+ & =
+  - (-iM_{12} + R)^2
+  + (-iM_{12} + R)
+  - Q^-_1 S^{1+}
+  + S^{1-} Q^+_1.
+\end{split}
+\end{align}
+Acting at point 1 only the contribution from $M$ and $R$ survives and $S$ and $Q$ drop:
+\begin{align}
+\begin{split}
+ [C_{\text{ferm}}, \phi_1(x_1) ] |0\rangle
+ & = \left(   
+      M_{12}^2 
+    + i (2\Delta_\phi -1) M_{12}
+    - \Delta_\phi(\Delta_\phi -1) ) 
+ \right) \phi_1(x_1) |0\rangle.
+\end{split}
+\end{align}
+The action of the generators is
+\begin{align}
+ i M_{12}   & \to \pm i \sqrt{1-\eta^2}, \\
+ (M_{12})^2 & \to - C_{\text{def},2}
+\end{align}
+Comments:
+\begin{itemize}
+ \item In Lorentzian signature we could have $\eta \ge 1$, which eats the factor $i$ (what about Euclidean signature?!?).
+ \item The sign of the $(M_{12})^2$ term also looks off, I would expect it would be $(M_{12})^2 = +C_{\text{def,2}}$.
+\end{itemize}
+
+In any case, the Casimir equations to be solved are
+\begin{align}
+\begin{split}
+& (\chi^2 - 4) f^{(2,0)}(\chi, \eta) 
+  + 2 \chi f^{(1,0)}(\chi, \eta) \\
+& - (\eta^2 - 1) f^{(0,2)}(\chi, \eta)
+  - \eta f^{(0,1)}(\chi, \eta)
+  - (2\Delta_\phi - 1) \sqrt{\eta^2 -1 } f^{(0,1)}(\chi, \eta) \\
+& - \left( \Delta_\phi(\Delta_\phi - 1)
+  + \mathcal{C}_2 \right) f(\chi, \eta) = 0
+\end{split}
+\end{align}
+Comments:
+\begin{itemize}
+ \item A superspace calculation gives no nilpotent invariants and the same Casimir equation.
+ \item The two sets of equations are decoupled so solutions are products of a function of $\chi$ and a function of $\eta$. The one for $\chi$
+ \begin{align}
+  (\chi^2 - 4) f''(\chi) + 2 \chi f'(\chi) 
+  - \left(\Delta+\frac{1}{2}\right) \left(\Delta-\frac{1}{2}\right) f(\chi) = 0,
+ \end{align}
+ can be easily solved into a shifted block: $f_{\Delta+1/2}(\chi)$.
+ \item It would be nice to find whether the rest (or something similar up to some signs) has a solution in terms of a sum of non-supersymmetric blocks.
+\end{itemize}
+
+
+% Now comes the puzzle: in our conventions the action of $M_{\mu\nu}$ on $\phi$ is a real differential operator $2 x_{[\nu}\partial_{\mu]}$, so this contribution to the Casimir equation is complex.
+% It might look like our conventions are inconsistent, but it's not clear how to fix it.
+% In particular, if we send $M \to i M$, then the defect subalgebra contains $M_{12} + R$ but the differential operator for $M$ becomes $2 i x_{[\nu}\partial_{\mu]}$.
+% Translating operators as $e^{ixP} \Om(0)$ instead of our conventions also does not make a difference.
+
+\section{Superspace calculation \texorpdfstring{$3d$}{3d}}
+
+We translate as
+\begin{align}
+ \Om(z) = e^{x^\mu P_\mu + \theta^{\a-} Q^+_\a + \theta^{\ad+} Q^-_\ad} \Om(0),
+\end{align}
+where the adjoint action is implicit. Thus
+\begin{align}
+ [P_\mu, \Om(z)] & = \partial_\mu \Om(z), \\
+ [Q^+_\a, \Om(z)] & = \left( 
+     \frac{\partial}{\partial \theta^{\a-}} 
+   - \frac{1}{2} \Sigma^\mu_{\a\ad} \theta^{+\ad} \partial_\mu
+ \right) \Om(z), \\
+ [Q^-_\ad, \Om(z)] & = \left( 
+     \frac{\partial}{\partial \theta^{\ad+}} 
+   - \frac{1}{2} \Sigma^\mu_{\a\ad} \theta^{-\a} \partial_\mu
+ \right) \Om(z), \\
+ [D, \phi(x)] & =  \left(
+      x^\mu \partial_\mu 
+    + \theta^{\ad+} \frac{\partial}{\partial \theta^{\ad+}} 
+    + \theta^{\a-}  \frac{\partial}{\partial \theta^{\a-}} 
+    + \Delta
+  \right) \phi(x), \\
+ \ldots
+\end{align}
+The covariant derivatives are
+\begin{align}
+   D^+_\a 
+ & = \frac{\partial}{\partial \theta^{\a-}} 
+   + \frac{1}{2} \Sigma^\mu_{\a\ad} \theta^{+\ad} \partial_\mu, \\
+   D^-_\ad
+ & = \frac{\partial}{\partial \theta^{\ad+}} 
+   + \frac{1}{2} \Sigma^\mu_{\a\ad} \theta^{-\a} \partial_\mu,
+\end{align}
+The chiral and antichiral coordinates
+\begin{align}
+ y^\mu = x^\mu - \frac{1}{2} \theta^- \Sigma^\mu \theta^+, \qquad
+ D^+_\a y^\mu = 0, \quad
+ D^+_\a \theta^+ = 0, \\
+ \tilde y^\mu = x^\mu + \frac{1}{2} \theta^- \Sigma^\mu \theta^+, \qquad
+ D^-_\a y^\mu = 0, \quad
+ D^-_\a \theta^- = 0.
+\end{align}
+Imposing conservation of $Q_{1}^\pm$ and $P_3$ the invariant objects are
+\begin{align}
+ & z_1^1 = y_1^1 -   \theta_1^{2+} \theta_2^{1-}, \quad
+   z_1^2 = y_1^2 + i \theta_1^{2+} \theta_2^{1-}, \quad
+   \theta_1^{2+}, \\[0.5em]
+ & \tilde z_2^1 = \tilde y_2^1 +   \theta_1^{1+} \theta_2^{2-}, \quad
+   \tilde z_2^2 = \tilde y_2^2 + i \theta_1^{1+} \theta_2^{2-}, \quad
+   \theta_2^{2-}, \\[0.5em]
+ & z_{12}^3 = y_1^3 - \tilde y_2^3 - \theta_1^{1+} \theta_2^{1-}.
+\end{align}
+
+
+
+\appendix
+
+
+
+\section{Useful identities}
+
+\begin{align}
+ \{ A, B C \} = \{ A, B \} C - B [A, C], \\
+ \{ A, [B, C] \} = - \{ B, [A, C] \}  + [ \{A, B \}, C], \\
+\end{align}
+
+
+\end{document}
