@@ -1212,6 +1212,36 @@ The perpendicular coordinates vanish at the boundary
  \theta^{-1} - \theta^{+2} = 0, \quad
  \theta^{-2} - \theta^{+1} = 0.
 \end{align}
+Using $P_a$, $Q_a$, $K_a$ and $S_a$ (i.e. parallel to boundary) it is clear we can send the boundary points $(x^a, \theta^a)$ to $(0, 0)$ and $(\infty, 0)$ and we are left with the bulk point.
+We need to build invariants respect to the remaining generators $M_{12}$ and $D$.
+The bosonic one is clear, and taking same conventions as Lauria, Liendo and friends we get
+\begin{align}
+ \hat \chi = \frac{(x_1^a)^2}{(x_1^i)^2} \to \frac{(y_1^a)^2}{(y_1^i)^2}.
+\end{align}
+(After the arrow we supersymmetrize the invariant requiring it is chiral at point 1).
+For the nilpotent ones we can use $\theta^{\ad+}$, but $M_{12}$ invariance requires the free index is contracted, so there is only one invariant.
+All in all
+\begin{align}
+ \langle \phi(x, \theta) \hat \Om(0) \hat \Om(\infty) \rangle
+ = \frac{1}{|y_3|^{\Delta_\phi + \Delta_2 - \Delta_3}} \left(
+   f_1(\hat \chi)
+   + \frac{\theta^{1+}\theta^{2+}}{|y_1^i|} f_2(\hat \chi)
+ \right).
+\end{align}
+To get the contributions from descendants, notice that a chiral field is expanded as
+\begin{align}
+ \phi 
+ = \phi(y^\mu, \theta^{\ad+})
+ = \phi(y^\mu)
+ + \theta^{\ad+} \psi_{\ad}(y^\mu)
+ + \theta^{1+} \theta^{2+} \rho(y^\mu)
+\end{align}
+So clearly the functions $f_i(\hat \chi)$ already capture the blocks of the descendants:
+\begin{align}
+ & f_1(\hat \chi) \sim \langle \phi \hat \Om \hat \Om \rangle, \\
+ & f_2(\hat \chi) \sim \langle \rho \hat \Om \hat \Om \rangle.
+\end{align}
+
 
 
 \appendix
@@ -1225,5 +1255,39 @@ The perpendicular coordinates vanish at the boundary
  \{ A, [B, C] \} = - \{ B, [A, C] \}  + [ \{A, B \}, C], \\
 \end{align}
 
+(In conventions of DSD Tasi) If we use $e^{\frac{K \cdot x}{x^2}}$ we can send $\Om(x) \to \Om(\infty)$. Then we can get Ward identities using
+\begin{align}
+ & [D, \Om(\infty)] = -\Delta \Om(\infty), \\
+ & [P_\mu, \Om(\infty)] = 0, \\
+ & [M_{\mu\nu}, [e^{K\cdot x/x^2}, \Om(x)]] 
+ = \left[ e^{K\cdot x/x^2}, \left(
+    S_{\mu\nu} 
+    - 2 \frac{x^\nu x^\rho}{x^2} S_{\mu\rho}
+    + 2 \frac{x^\mu x^\rho}{x^2} S_{\nu\rho}
+ \right) \Om(x) \right].
+\end{align}
+The last one is hard to understand unless $\Om(x)$ is a scalar and then it just vanishes (as expected!).
+
+Also consider a transformation with $a^\mu = (1-\epsilon) \frac{x_2^\mu}{x_2^2}$, we have at first order in $\epsilon$ that $x_2' = x_2 / \epsilon$ and
+\begin{align}
+ \Omega(x_1') = \frac{x_2^2}{x_{12}^2}, \qquad
+ \Omega(x_2') = \epsilon^{-2}.
+\end{align}
+From this we can for instance recover the two point function
+\begin{align}
+ \langle \Om(x_1) \Om(x_2) \rangle
+ & = \Omega(x_1')^{\Delta_1} \Omega(x_2')^{\Delta_2} \langle \Om(x_1') \Om(x_2') \rangle \\
+ & = \frac{1}{x_{12}^{2\Delta_1}} \langle \Om(x_1') 
+     \lim_{\epsilon\to0} \left( \frac{x_2}{\epsilon}\right)^{2\Delta_2} \Om(x_2/\epsilon) 
+     \rangle \\
+ & = \frac{1}{x_{12}^{2\Delta_1}} \langle \Om(x_1') \Om(\infty) \rangle \\
+ & = \frac{1}{x_{12}^{2\Delta_1}}.
+\end{align}
+Noting that $R^\mu_{\ph \mu\nu}(0) = \delta^\mu_\nu$ we can also reconstruct the three-point function from
+\begin{align}
+ \langle \Om_1^{\mu_1 \ldots \mu_\ell}(0) \Om_2(x) \Om_3(\infty) \rangle
+ = \frac{x^{\mu_1} \ldots x^{\mu_\ell} }{|x|^{\Delta_1 + \Delta_2 - \Delta_3 + \ell}}
+\end{align}
+The case when $I^\mu_{\ph \mu\nu}(x)$ appears seems more subtle, because it is not clear how to send this factor to infinity.
 
 \end{document}

@@ -997,6 +997,8 @@ allCombinations = DeleteDuplicates[Sort /@ allCombinations];
 
 
 
+
+
 (* ::Text:: *)
 (*Map to commutation relations*)
 
@@ -3373,7 +3375,7 @@ Join[
 ] // Flatten // DeleteDuplicates
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Inversion*)
 
 
@@ -3919,7 +3921,7 @@ MultilineFunction->None]\)[\[Eta],\[Xi],\[Phi]])==0, f[\[Eta],\[Xi],\[Phi]], {\[
 
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Invariant intervals Boundary  \[LeftAngleBracket] \[Phi] Oh Oh \[RightAngleBracket] using frame*)
 
 
@@ -3934,37 +3936,34 @@ inversion[{x1_, x2_, x3_, \[Theta]p1_, \[Theta]p2_, \[Theta]m1_, \[Theta]m2_}] :
 		Table[x[\[Mu]] \[CenterDot] deninv, {\[Mu], 3}],
 		Table[(
 			- 1/2 \[Theta]p[\[Alpha]d] \[CenterDot] Sum[\[Theta]p[\[Beta]]\[CenterDot]\[Theta]m[\[Beta]], {\[Beta], 2}]
-			+ Sum[\[CapitalSigma]b[\[Mu]][\[Alpha]d, \[Beta]d] x[\[Mu]] \[Theta]p[\[Beta]d], {\[Mu], 3}, {\[Beta]d, 2}]) \[CenterDot] deninv
+			+ Sum[\[CapitalSigma]b[\[Mu]][\[Alpha]d, \[Beta]d] x[\[Mu]] \[CenterDot] \[Theta]p[\[Beta]d], {\[Mu], 3}, {\[Beta]d, 2}]) \[CenterDot] deninv
 		, {\[Alpha]d, 2}],
 		Table[(
 			- 1/2 \[Theta]m[\[Alpha]] \[CenterDot] Sum[\[Theta]p[\[Beta]]\[CenterDot]\[Theta]m[\[Beta]], {\[Beta], 2}]
-			- Sum[\[CapitalSigma]b[\[Mu]][\[Beta], \[Alpha]] x[\[Mu]] \[Theta]m[\[Beta]], {\[Mu], 3}, {\[Beta], 2}]) \[CenterDot] deninv
+			- Sum[\[CapitalSigma]b[\[Mu]][\[Beta], \[Alpha]] x[\[Mu]] \[CenterDot] \[Theta]m[\[Beta]], {\[Mu], 3}, {\[Beta], 2}]) \[CenterDot] deninv
 		, {\[Alpha], 2}]
-	] // GExpand // joinCD // CollectCD
+	] // GExpand // CollectCD
 ];
 translation[{a1_, a2_, a3_}][{x1_, x2_, x3_, args__}] := {x1+a1, x2+a2, x3+a3, args};
-superTransM[{\[Xi]1_, \[Xi]2_}][{x1_, x2_, x3_, \[Theta]p1_, \[Theta]p2_, \[Theta]m1_, \[Theta]m2_}] := Module[{x, \[Theta]p, \[Theta]m, \[Xi]},
-	x[1] = x1; x[2] = x2; x[3] = x3;
-	\[Theta]p[1] = \[Theta]p1; \[Theta]p[2] = \[Theta]p2;
-	\[Theta]m[1] = \[Theta]m1; \[Theta]m[2] = \[Theta]m2;
-	\[Xi][1] = \[Xi]1; \[Xi][2] = \[Xi]2;
-	Flatten @ {
-		Table[x[\[Mu]] - 1/2 Sum[\[CapitalSigma][\[Mu]][\[Alpha], \[Alpha]d] \[Xi][\[Alpha]] \[CenterDot] \[Theta]p[\[Alpha]d], {\[Alpha], 2}, {\[Alpha]d, 2}], {\[Mu], 3}],
-		Table[\[Theta]p[\[Alpha]d], {\[Alpha]d, 2}],
-		Table[\[Theta]m[\[Alpha]] + \[Xi][\[Alpha]], {\[Alpha], 2}]
-	}
-];
-superTransP[{\[Xi]1_, \[Xi]2_}][{x1_, x2_, x3_, \[Theta]p1_, \[Theta]p2_, \[Theta]m1_, \[Theta]m2_}] := Module[{x, \[Theta]p, \[Theta]m, \[Xi]},
-	x[1] = x1; x[2] = x2; x[3] = x3;
-	\[Theta]p[1] = \[Theta]p1; \[Theta]p[2] = \[Theta]p2;
-	\[Theta]m[1] = \[Theta]m1; \[Theta]m[2] = \[Theta]m2;
-	\[Xi][1] = \[Xi]1; \[Xi][2] = \[Xi]2;
-	Flatten @ {
-		Table[x[\[Mu]] - 1/2 Sum[\[CapitalSigma][\[Mu]][\[Alpha], \[Alpha]d] \[Xi][\[Alpha]d] \[CenterDot] \[Theta]m[\[Alpha]], {\[Alpha], 2}, {\[Alpha]d, 2}], {\[Mu], 3}],
-		Table[\[Theta]p[\[Alpha]d] + \[Xi][\[Alpha]d], {\[Alpha]d, 2}],
-		Table[\[Theta]m[\[Alpha]], {\[Alpha], 2}]
-	}
-];
+superTransPM[{\[Xi]p1_, \[Xi]p2_, \[Xi]m1_, \[Xi]m2_}][{x1_, x2_, x3_, \[Theta]p1_, \[Theta]p2_, \[Theta]m1_, \[Theta]m2_}] := 
+	Module[{x, \[Theta]p, \[Theta]m, \[Xi]p, \[Xi]m},
+		x[1] = x1; x[2] = x2; x[3] = x3;
+		\[Theta]p[1] = \[Theta]p1; \[Theta]p[2] = \[Theta]p2;
+		\[Theta]m[1] = \[Theta]m1; \[Theta]m[2] = \[Theta]m2;
+		\[Xi]p[1] = \[Xi]p1; \[Xi]p[2] = \[Xi]p2;
+		\[Xi]m[1] = \[Xi]m1; \[Xi]m[2] = \[Xi]m2;
+		Flatten @ {
+			Table[
+				+ x[\[Mu]] 
+				- 1/2 Sum[\[CapitalSigma][\[Mu]][\[Alpha], \[Alpha]d] \[Xi]p[\[Alpha]d] \[CenterDot] \[Theta]m[\[Alpha]],  {\[Alpha], 2}, {\[Alpha]d, 2}]
+				- 1/2 Sum[\[CapitalSigma][\[Mu]][\[Alpha], \[Alpha]d] \[Xi]m[\[Alpha]]  \[CenterDot] \[Theta]p[\[Alpha]d], {\[Alpha], 2}, {\[Alpha]d, 2}]
+			, {\[Mu], 3}],
+			Table[\[Theta]p[\[Alpha]d] + \[Xi]p[\[Alpha]d], {\[Alpha]d, 2}],
+			Table[\[Theta]m[\[Alpha]]  + \[Xi]m[\[Alpha]],  {\[Alpha],  2}]
+		}
+	];
+superTransP[{\[Xi]p1_, \[Xi]p2_}][{args__}] := superTransPM[{\[Xi]p1, \[Xi]p2, 0, 0}][{args}]
+superTransM[{\[Xi]m1_, \[Xi]m2_}][{args__}] := superTransPM[{0, 0, \[Xi]m1, \[Xi]m2}][{args}]
 
 
 pt[i_] := {x[i][1], x[i][2], x[i][3], \[Theta]p[i][1], \[Theta]p[i][2], \[Theta]m[i][1], \[Theta]m[i][2]};
@@ -3972,30 +3971,30 @@ lst = {xinv[1][1], xinv[1][2], xinv[1][3], \[Theta]pinv[1][1], \[Theta]pinv[1][2
 inversion[pt[1]] - lst // GExpand // CollectCD
 
 
-(* WROOONG! For (1,1) we whould set them equal! *)
-pt1 = pt[1] /. {\[Theta]m[1][_] :> 0, x[1][3] -> 0}
+pt3 = pt[3] /. {\[Theta]m[i_][1] :> \[Theta]p[i][2], \[Theta]m[i_][2] :> \[Theta]p[i][1], x[i_][3] -> 0}
 
 
-expr = inversion[pt1]
-\[Xi]s = expr[[4;;5]];
-expr = superTransP[-\[Xi]s][expr]
-expr = inversion[expr]
-
-
-expr2 = inversion[expr]
-
-
-invPts12 = Append[expr2[[1;;2]], 0];
-expr2 = translation[-eps invPts12][expr2]
+expr = inversion[pt3]
+\[Xi]s = expr[[4;;]];
+invPts12 = Append[expr[[1;;2]], 0];
+expr = superTransPM[-\[Xi]s][expr]
+expr2 = translation[-eps invPts12][expr]
 expr2 = inversion[expr2] // GExpand // CollectCD[#, Factor] &
 expr2 /. eps -> 1
 
 
-expr2 // CollectCD[#, Factor] &
-expr3
+expr = inversion[pt[1]] // GExpand // CollectCD[#, Factor] &;
+expr = superTransPM[-\[Xi]s][expr] // GExpand // CollectCD[#, Factor] &;
+expr2 = translation[-invPts12][expr] // GExpand // CollectCD[#, Factor] &;
+expr2 = inversion[expr2] // GExpand // CollectCD[#, Factor] &
 
 
-Limit[expr, eps -> 1]
+expr3 = expr2 /. (\[Theta]m|\[Theta]p)[_][_] :> 0 /. x[i_][\[Mu]_] /; 1<=\[Mu]<=2 :> (x[i][\[Mu]]-x[2][\[Mu]]);
+{xx1, xx2, xx3, asdf, asdf, asdf, asdf} = expr3 ;
+inv = (xx1^2 + xx2^2) / xx3^2 // Factor // FullSimplify
+
+
+\[ScriptCapitalK]d[1][1, 2, 3][inv] /. {(\[Theta]m|\[Theta]p)[_][_] :> 0, \[CapitalDelta][_]:> 0} /. x[2|3][3] :> 0 // Together
 
 
 (* ::Subsection::Closed:: *)
@@ -4635,7 +4634,242 @@ MultilineFunction->None]\)[\[Eta],\[Xi],\[Phi]])==0, f[\[Eta],\[Xi],\[Phi]], {\[
 
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
+(*Invariant intervals Boundary  \[LeftAngleBracket] \[Phi] Oh Oh \[RightAngleBracket]*)
+
+
+(* ::Subsubsection::Closed:: *)
+(*Bosonic blocks*)
+
+
+\[ScriptCapitalC]2defect[i__][expr_] := (
+	\[ScriptCapitalD]d[i][\[ScriptCapitalD]d[i][expr]]
+	- 1/2 Sum[\[ScriptCapitalP]d[\[Mu]][i][\[ScriptCapitalK]d[\[Mu]][i][expr]] + \[ScriptCapitalK]d[\[Mu]][i][\[ScriptCapitalP]d[\[Mu]][i][expr]], {\[Mu], 2}]
+	- \[ScriptCapitalM]d[1, 2][i][\[ScriptCapitalM]d[1, 2][i][expr]]
+)
+
+
+\[Chi]v = (x[1][1]^2 + x[1][2]^2) / x[1][3]^2;
+pref = (x[1][1]^2 + x[1][2]^2 (* + x[1][3]^2 *))^(-1/2(\[CapitalDelta][1] + \[CapitalDelta][2] - \[CapitalDelta][3]));
+pref = (x[1][3]^2)^(-1/2(\[CapitalDelta][1] + \[CapitalDelta][2] - \[CapitalDelta][3]));
+restore\[Chi] = Solve[\[Chi]v == \[Chi], x[1][3]] // First;
+GD[f_[\[Chi]], a_] := D[f[\[Chi]], \[Chi]] GD[\[Chi]v, a];
+kappa = - 1/2 (\[CapitalDelta] + \[CapitalDelta][2] - \[CapitalDelta][3]);
+diffEq = (\[ScriptCapitalC]2defect[1][pref f[\[Chi]]] - c2 pref f[\[Chi]]) / pref /. (\[Theta]p|\[Theta]m)[_][_] :> 0 // ExpandAll
+diffEq = % /. restore\[Chi] /. \[CapitalDelta][2] -> \[CapitalDelta]23 + \[CapitalDelta][3] // Simplify
+
+
+diffEq /. f -> (#^kappa Hypergeometric2F1[-kappa, -kappa, \[CapitalDelta], -1/#] &);
+% /. {\[CapitalDelta]23 -> \[CapitalDelta][2]-\[CapitalDelta][3], c2 -> \[CapitalDelta](\[CapitalDelta]- 2)};
+% // Series[#, {\[Chi], Infinity, 10}] &
+
+
+diffEq /. f -> (
+	(#)^(1/2(\[CapitalDelta]-\[CapitalDelta][2]-\[CapitalDelta][3])) 
+	Hypergeometric2F1[(\[CapitalDelta]+\[CapitalDelta][2]-\[CapitalDelta][3])/2, (\[CapitalDelta]-\[CapitalDelta][2]+\[CapitalDelta][3])/2, \[CapitalDelta], 1/#] &) /. c2 -> \[CapitalDelta](\[CapitalDelta]- 2);
+% // Series[#, {\[Chi], Infinity, 2}] &
+
+
+(* ::Subsubsection::Closed:: *)
+(*Some crap*)
+
+
+Clear[specK]
+
+
+dot[x_, y_] := Sum[x[\[Mu]] y[\[Mu]], {\[Mu], 3}];
+sq[x_] := dot[x, x]
+specK[a_] := x[\[Mu]_]:> (x[\[Mu]] - a[\[Mu]] sq[x]) / (1 - 2 dot[a, x] + sq[a] sq[x]);
+
+
+ansatz[\[Mu]_, \[Nu]_] := (
+	- 2 a[\[Mu]] a[\[Nu]] dot[x, x]
+	+ 4 a[\[Nu]] x[\[Mu]] dot[a, x]
+	- 2 x[\[Mu]] x[\[Nu]] dot[a, a]
+	+ 2 a[\[Nu]] x[\[Mu]]
+	- 2 a[\[Mu]] x[\[Nu]]
+	+ KroneckerDelta[\[Mu], \[Nu]] (
+		+ 2 dot[a, x]
+		+ dot[a, a] dot[x, x]
+		+ 1
+	)
+);
+
+
+Table[
+	lhs = D[x[\[Mu]] /. specK[a], x[\[Nu]]] /. specK[b] /. b[\[Rho]_] :> -a[\[Rho]] // Together // Expand;
+	rhs = ansatz[\[Mu], \[Nu]];
+	lhs - rhs
+, {\[Mu], 3}, {\[Nu], 3}] // Expand
+
+
+terms = Sum[(
+	+ (x[\[Nu]] /. specK[a] /. x -> x[1] /. a[\[Mu]_] :> x[3][\[Mu]] / sq[x[3]])
+	- (x[\[Nu]] /. specK[a] /. x -> x[2] /. a[\[Mu]_] :> x[3][\[Mu]] / sq[x[3]])
+)^2, {\[Nu], 3}] // Together // Factor
+
+
+Table[
+	Sum[ansatz[\[Mu], \[Rho]] ansatz[\[Nu], \[Rho]], {\[Rho], 3}] - KroneckerDelta[\[Mu], \[Nu]] (
+		+ 2 dot[a, x]
+		+ dot[a, a] dot[x, x]
+		+ 1
+	)^2
+, {\[Mu], 3}, {\[Nu], 3}] // Together // Factor
+
+
+ansatz[\[Mu]_, \[Nu]_] := ((
+		+ KroneckerDelta[\[Mu], \[Nu]] (1 - 2dot[a, x] + dot[a, a] dot[x, x])
+		- 2 a[\[Mu]] a[\[Nu]] dot[x, x]
+		+ 4 a[\[Mu]] x[\[Nu]] dot[a, x]
+		- 2 x[\[Mu]] x[\[Nu]] dot[a, a]
+		- 2 a[\[Mu]] x[\[Nu]]
+		+ 2 x[\[Mu]] a[\[Nu]]
+	) / (1 - 2dot[a, x] + dot[a, a] dot[x, x])^2
+);
+
+
+(tab = Table[
+	lhs = D[x[\[Mu]] /. specK[a], x[\[Nu]]] // Together;
+	rhs = ansatz[\[Mu], \[Nu]];
+	lhs - rhs
+, {\[Mu], 3}, {\[Nu], 3}]) // Together // Numerator // CoefficientList[#, {a[1], a[2], a[3], x[1], x[2], x[3]}] & // Flatten // DeleteCases[#, 0] &
+Solve[% == 0, {k1, k2, k3, k4, k5, k6, k7, k8, k9, k10, k11, k12}]
+
+
+Table[
+	term1 = Sum[
+		(ansatz[\[Mu], \[Rho]] /. x[\[Sigma]_] :> 0)
+		(ansatz[\[Nu], \[Rho]] /. a[\[Sigma]_] :> (1-e) x[\[Sigma]] / sq[x])
+	, {\[Rho], 3}] // Together // Series[#, {e, 0, -2}] & // Normal;
+	term2 = 0 (
+		+ k1 sq[x12]^2 KroneckerDelta[\[Mu], \[Nu]]
+		- k2 sq[x12] x12[\[Mu]] x12[\[Nu]]
+	) / Factor@Expand[e^2 sq[x12]^2];
+	term1 - term2 // Together // Numerator // Collect[#, {x[1][1], x[1][2], x[1][3]}] &
+, {\[Mu], 3}, {\[Nu], 3}]
+
+
+term1
+
+
+x12[\[Mu]_] := x[1][\[Mu]] - x[2][\[Mu]];
+Table[
+	term1 = Sum[
+		(ansatz[\[Mu], \[Rho]] /. x -> x[1] /. a[\[Sigma]_] :> (1-e) x[2][\[Sigma]] / sq[x[2]])
+		(ansatz[\[Nu], \[Rho]] /. x -> x[2] /. a[\[Sigma]_] :> (1-e) x[2][\[Sigma]] / sq[x[2]])
+	, {\[Rho], 3}] // Together // Series[#, {e, 0, -2}] & // Normal;
+	term2 = (
+		+ k1 sq[x12]^2 KroneckerDelta[\[Mu], \[Nu]]
+		- k2 sq[x12] x12[\[Mu]] x12[\[Nu]]
+	) / Factor@Expand[e^2 sq[x12]^2];
+	term1 - term2 // Together // Numerator // Collect[#, {x[1][1], x[1][2], x[1][3]}] &
+, {\[Mu], 3}, {\[Nu], 3}]
+
+
+term1 // Expand // Factor
+
+
+term2 // Expand // Factor
+
+
+1-2(1-e)+(1-e)^2//Simplify
+
+
+\[CapitalDelta][2]^2-2 \[CapitalDelta][2] (-1+\[CapitalDelta][3])+(-2+\[CapitalDelta][3]) \[CapitalDelta][3] // Factor // Simplify
+
+
+(* ::Subsubsection::Closed:: *)
+(*Susy invariants*)
+
+
+\[ScriptCapitalM]d[1, 2][1][\[Theta]p[1][1]\[CenterDot]\[Theta]p[1][2]]
+
+
+(* ::Subsubsection:: *)
+(*Susy blocks*)
+
+
+joinCD[expr_] := (
+	expr //. {a_CenterDot^b_ :> 0}
+		 //. {a_Plus?(Not@FreeQ[#,CenterDot]&) b_ :> GExpand[a\[CenterDot]b]}
+		 //. {a_CenterDot b_?(Not@FreeQ[#, \[Theta]p|\[Theta]m]&) :> a\[CenterDot]b}
+);
+
+
+Clear[y];
+yV[i_][\[Mu]_]  := x[i][\[Mu]] - 1/2 Sum[\[CapitalSigma][\[Mu]][\[Alpha], \[Alpha]d] \[Theta]m[i][\[Alpha]]\[CenterDot]\[Theta]p[i][\[Alpha]d], {\[Alpha], 2}, {\[Alpha]d, 2}];
+restoreY = First @ Solve[{
+	yV[1][1] == y[1][1],
+	yV[1][2] == y[1][2],
+	yV[1][3] == y[1][3]
+}, {x[1][1], x[1][2], x[1][3]}];
+Join[
+	Table[\[ScriptCapitalD]pd[\[Alpha]][1][yV[1][\[Mu]]], {\[Mu], d}, {\[Alpha], 2}],
+	Table[\[ScriptCapitalD]pd[\[Alpha]][1][\[Theta]p[1][\[Alpha]d]], {\[Alpha], 2}, {\[Alpha]d, 2}]
+] // Flatten // DeleteDuplicates
+
+
+pref = y[1][3]^(-(\[CapitalDelta][1]+\[CapitalDelta][2]-\[CapitalDelta][3]));
+funs = f[1][\[Chi]] + inv f[2][\[Chi]];
+invV = \[Theta]p[1][1] \[CenterDot] \[Theta]p[1][2] \[CenterDot] powerExpr[yV[1][3], -1, (\[Theta]p|\[Theta]m)] // GExpand // CollectCD;
+\[Chi]v = Sum[y[1][a]^2, {a, 2}] / y[1][3]^2;
+restore\[Chi] = Solve[\[Chi]v == \[Chi], y[1][1]] // First;
+GD[y[i_][\[Mu]_], a_] := GD[yV[i][\[Mu]], a]
+GD[inv, a_] := GD[invV, a]
+GD[f_[\[Chi]], a_] := D[f[\[Chi]], \[Chi]] GD[\[Chi]v, a];
+
+
+{
+	Table[\[ScriptCapitalD]pd[\[Alpha]][1][pref funs], {\[Alpha], 2}],
+	Table[\[ScriptCapitalM]d[1, 2][1][pref funs], {\[Alpha], 2}]
+} /. restoreY // GExpand
+
+
+comm [i___][A_, B_][expr_] := A[i][B[i][expr]] - B[i][A[i][expr]];
+acomm[i___][A_, B_][expr_] := A[i][B[i][expr]] + B[i][A[i][expr]];
+\[ScriptCapitalQ]pard[1][i___][expr_] := \[ScriptCapitalQ]pd[1][i][expr] + \[ScriptCapitalQ]md[2][i][expr];
+\[ScriptCapitalQ]pard[2][i___][expr_] := \[ScriptCapitalQ]pd[2][i][expr] + \[ScriptCapitalQ]md[1][i][expr];
+\[ScriptCapitalS]pard[1][i___][expr_] := \[ScriptCapitalS]pd[2][i][expr] + \[ScriptCapitalS]md[1][i][expr];
+\[ScriptCapitalS]pard[2][i___][expr_] := \[ScriptCapitalS]pd[1][i][expr] + \[ScriptCapitalS]md[2][i][expr];
+\[ScriptCapitalC]2defect[i__][expr_] := (
+	\[ScriptCapitalD]d[i][\[ScriptCapitalD]d[i][expr]]
+	- 1/2 Sum[acomm[i][\[ScriptCapitalP]d[a], \[ScriptCapitalK]d[a]][expr], {a, 2}]
+	- \[ScriptCapitalM]d[1, 2][i][\[ScriptCapitalM]d[1, 2][i][expr]]
+	+ 1/4 Sum[comm[i][\[ScriptCapitalS]pard[a], \[ScriptCapitalQ]pard[a]][expr], {a, 2}]
+);
+
+
+(* ::Text:: *)
+(*Check the Casimir indeed commutes (takes a bit long)*)
+
+
+(* {
+	Table[comm[1][\[ScriptCapitalC]2defect, \[ScriptCapitalP]d[a]][f], {a, 2}],
+	comm[1][\[ScriptCapitalC]2defect, \[ScriptCapitalD]d][f],
+	comm[1][\[ScriptCapitalC]2defect, \[ScriptCapitalM]d[1, 2]][f],
+	Table[comm[1][\[ScriptCapitalC]2defect, \[ScriptCapitalK]d[a]][f], {a, 2}],
+	Table[comm[1][\[ScriptCapitalC]2defect, \[ScriptCapitalQ]pard[a]][f], {a, 2}],
+	Table[comm[1][\[ScriptCapitalC]2defect, \[ScriptCapitalS]pard[a]][f], {a, 2}]
+} // GExpand // Flatten *)
+
+
+eqs = (\[ScriptCapitalC]2defect[1][pref funs] - c2 pref funs) / pref // GExpand // CollectCD;
+
+
+eqs = x[1][3] / y[1][3] eqs /. r[1] -> \[CapitalDelta][1] // CollectCD[#, Factor] &;
+eqs = eqs /. restoreY // GExpand // joinCD // CollectCD[#, Factor] &;
+eqs = % /. \[Theta]p[1][1]\[CenterDot]\[Theta]p[1][2] -> inv y[1][3] /. restore\[Chi] // 
+	CollectCD[#, Collect[#, inv, Collect[#, f_[\[Chi]], Factor] &] &] &;
+neqs = % /. inv^2 :> 0 /. (\[Theta]p|\[Theta]m)[_][_] :> 0 // CoefficientList[#, inv] &
+sol = Solve[neqs == 0, {f[1]''[\[Chi]], f[2]''[\[Chi]]}] // First
+eqs /. sol // CollectCD[#, Together] & // (# /. inv -> invV // joinCD) & 
+
+
+neqs
+
+
+(* ::Subsection:: *)
 (*Line, two pt fun defect blocks*)
 
 
