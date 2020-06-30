@@ -1001,6 +1001,8 @@ allCombinations = DeleteDuplicates[Sort /@ allCombinations];
 
 
 
+
+
 (* ::Text:: *)
 (*Map to commutation relations*)
 
@@ -3471,1176 +3473,11 @@ Table[
 , {term, basis}, {rdo, ruleDiffOp}] // CollectCD
 
 
-(* ::Subsection::Closed:: *)
-(*Invariant intervals Boundary*)
-
-
-(* ::Text:: *)
-(*Invariant respect covariant derivatives*)
-
-
-SetNumeric[a];
-Clear[y, yt];
-y[i_][\[Mu]_]  := x[i][\[Mu]] - 1/2 Sum[\[CapitalSigma][\[Mu]][\[Alpha], \[Alpha]d] \[Theta]m[i][\[Alpha]]\[CenterDot]\[Theta]p[i][\[Alpha]d], {\[Alpha], 2}, {\[Alpha]d, 2}];
-yt[i_][\[Mu]_] := x[i][\[Mu]] + 1/2 Sum[\[CapitalSigma][\[Mu]][\[Alpha], \[Alpha]d] \[Theta]m[i][\[Alpha]]\[CenterDot]\[Theta]p[i][\[Alpha]d], {\[Alpha], 2}, {\[Alpha]d, 2}];
-Join[
-	Table[\[ScriptCapitalD]pd[\[Alpha]][1][y[1][\[Mu]]], {\[Mu], d}, {\[Alpha], 2}],
-	Table[\[ScriptCapitalD]pd[\[Alpha]][1][\[Theta]p[1][\[Alpha]d]], {\[Alpha], 2}, {\[Alpha]d, 2}],
-	Table[\[ScriptCapitalD]md[\[Alpha]][2][yt[2][\[Mu]]], {\[Mu], d}, {\[Alpha], 2}],
-	Table[\[ScriptCapitalD]md[\[Alpha]][2][\[Theta]m[2][\[Beta]]], {\[Alpha], 2}, {\[Beta], 2}]
-] // Flatten // DeleteDuplicates
-
-
-(* ::Text:: *)
-(*Find invariant respect \[ScriptCapitalQ] and \[ScriptCapitalP]*)
-
-
-SetNumeric[kk[_]];
-ansatz = (
-	+ kk[1]  yy[1][1]
-	+ kk[2]  yy[1][2]
-	+ kk[3]  yy[1][3]
-	+ kk[4]  yyt[2][1] 
-	+ kk[5]  yyt[2][2]
-	+ kk[6]  yyt[2][3]
-	+ kk[7]  \[Theta]p[1][1] \[CenterDot] \[Theta]p[1][2]
-	+ kk[8]  \[Theta]p[1][1] \[CenterDot] \[Theta]m[2][1]
-	+ kk[9]  \[Theta]p[1][1] \[CenterDot] \[Theta]m[2][2]
-	+ kk[10] \[Theta]p[1][2] \[CenterDot] \[Theta]m[2][1]
-	+ kk[11] \[Theta]p[1][2] \[CenterDot] \[Theta]m[2][2]
-	+ kk[12] \[Theta]m[2][1] \[CenterDot] \[Theta]m[2][2]
-);
-sol = {
-	kk[4] -> I kk[5]+kk[10],
-	kk[6] -> -kk[11] -kk[12],
-	kk[3] -> -kk[7] -kk[8],
-	kk[1] -> I kk[2] - kk[10],
-	kk[8] -> -kk[11],
-	kk[10] -> -2I kk[5] + kk[9],
-	kk[2] -> -kk[5]
-};
-{
-	\[ScriptCapitalQ]pd[1][1, 2][ansatz] + \[ScriptCapitalQ]md[2][1, 2][ansatz],
-	\[ScriptCapitalQ]pd[2][1, 2][ansatz] + \[ScriptCapitalQ]md[1][1, 2][ansatz],
-	\[ScriptCapitalP]d[1][1, 2][ansatz],
-	\[ScriptCapitalP]d[2][1, 2][ansatz]
-} /. {yy -> y, yyt -> yt} //. sol // Collect[#, \[Theta]m[_][_]|\[Theta]p[_][_], Factor] &
-ansatz //. sol // Collect[#, kk[_], Simplify] &
-
-
-(* ::Text:: *)
-(*Check them:*)
-
-
-invs = {
-	\[Theta]p[1][1] - \[Theta]m[2][2],
-	\[Theta]p[1][2] - \[Theta]m[2][1],
-	y[1][1] - yt[2][1] +   \[Theta]m[2][1]\[CenterDot]\[Theta]p[1][2] +   \[Theta]m[2][2]\[CenterDot]\[Theta]p[1][1],
-	y[1][2] - yt[2][2] - I \[Theta]m[2][1]\[CenterDot]\[Theta]p[1][2] + I \[Theta]m[2][2]\[CenterDot]\[Theta]p[1][1],
-	y[1][3]  - \[Theta]p[1][1]\[CenterDot]\[Theta]p[1][2],
-	yt[2][3] - \[Theta]m[2][1]\[CenterDot]\[Theta]m[2][2]
-};
-{
-	\[ScriptCapitalQ]pd[1][1, 2][invs] + \[ScriptCapitalQ]md[2][1, 2][invs],
-	\[ScriptCapitalQ]pd[2][1, 2][invs] + \[ScriptCapitalQ]md[1][1, 2][invs],
-	\[ScriptCapitalP]d[1][1, 2][invs],
-	\[ScriptCapitalP]d[2][1, 2][invs]
-} // Expand // Flatten // DeleteDuplicates
-
-
-(* ::Text:: *)
-(*Require invariance under \[ScriptCapitalM]*)
-
-
-z1  = y[1][1] - yt[2][1] +   \[Theta]m[2][1]\[CenterDot]\[Theta]p[1][2] +   \[Theta]m[2][2]\[CenterDot]\[Theta]p[1][1];
-z2  = y[1][2] - yt[2][2] - I \[Theta]m[2][1]\[CenterDot]\[Theta]p[1][2] + I \[Theta]m[2][2]\[CenterDot]\[Theta]p[1][1];
-z3  = y[1][3]  - \[Theta]p[1][1]\[CenterDot]\[Theta]p[1][2];
-zt3 = yt[2][3] - \[Theta]m[2][1]\[CenterDot]\[Theta]m[2][2];
-th1 = \[Theta]p[1][1] - \[Theta]m[2][2];
-th2 = \[Theta]p[1][2] - \[Theta]m[2][1];
-{
-	\[ScriptCapitalM]d[1, 2][1, 2][z1\[CenterDot]z1 + z2\[CenterDot]z2],
-	\[ScriptCapitalM]d[1, 2][1, 2][z3],
-	\[ScriptCapitalM]d[1, 2][1, 2][zt3],
-	\[ScriptCapitalM]d[1, 2][1, 2][th1\[CenterDot]th2]
-} // GExpand
-
-
-\[Xi]v = (
-	(z1\[CenterDot]z1 + z2\[CenterDot]z2 + (z3-zt3)\[CenterDot](z3-zt3))
-	\[CenterDot] powerExpr[z3,  -1, \[Theta]p|\[Theta]m]
-	\[CenterDot] powerExpr[zt3, -1, \[Theta]p|\[Theta]m]
-) // GExpand // CollectCD[#, Factor] &;
-\[Phi]v = zt3 \[CenterDot] powerExpr[z3, -1, \[Theta]p|\[Theta]m] // GExpand // CollectCD[#, Factor] &;
-
-
-th12v = th1 \[CenterDot] th2 \[CenterDot] powerExpr[z3, -1, \[Theta]p|\[Theta]m] // GExpand // CollectCD[#, Factor] &;
-
-
-\[Xi]v /. {\[Theta]p[_][_]|\[Theta]m[_][_] :> 0} // FullSimplify
-\[Phi]v /. {\[Theta]p[_][_]|\[Theta]m[_][_] :> 0} // FullSimplify
-
-
-GExpand[th1 \[CenterDot] th2]
-
-
-
-
-
-joinCD[expr_] := (
-	expr //. {a_CenterDot^b_ :> 0}
-		 //. {a_Plus?(Not@FreeQ[#,CenterDot]&) b_ :> GExpand[a\[CenterDot]b]}
-		 //. {a_CenterDot b_?(Not@FreeQ[#, \[Theta]p|\[Theta]m]&) :> a\[CenterDot]b}
-);
-restoreXParRule = Solve[{z1 == zz1, z2 == zz2}, {x[1][1], x[1][2]}] // First;
-restoreThRule = {\[Theta]m[2][1] \[CenterDot] \[Theta]m[2][2] -> 
-	+ \[Theta]m[2][1] \[CenterDot] \[Theta]p[1][1]
-	- \[Theta]m[2][2] \[CenterDot] \[Theta]p[1][2]
-	+ \[Theta]p[1][1] \[CenterDot] \[Theta]p[1][2]
-	- (\[Phi] \[Xi] - (1-\[Phi])^2)^(-1/2) Sqrt[zz1^2 + zz2^2] \[CapitalTheta]
-};
-x23v = (
-	+ z3 \[Phi] 
-	+ \[Theta]m[2][1] \[CenterDot] \[Theta]m[2][2] 
-	- 1/2 Sum[\[CapitalSigma][3][\[Alpha], \[Alpha]d] \[Theta]m[2][\[Alpha]]\[CenterDot]\[Theta]p[2][\[Alpha]d], {\[Alpha], 2}, {\[Alpha]d, 2}]
-) // GExpand // CollectCD[#, Simplify] &;
-x13v = (
-	+ (\[Phi] \[Xi] - (1-\[Phi])^2)^(-1/2) Sqrt[zz1^2 + zz2^2] 
-	+ 1/2 Sum[\[CapitalSigma][3][\[Alpha], \[Alpha]d] \[Theta]m[1][\[Alpha]]\[CenterDot]\[Theta]p[1][\[Alpha]d], {\[Alpha], 2}, {\[Alpha]d, 2}]
-	+ \[Theta]p[1][1] \[CenterDot] \[Theta]p[1][2] 
-) // GExpand // CollectCD[#, Simplify] &;
-Clear[powx13, powx23];
-powx13[a_] := powx13[a] = powerExpr[x13v, a, \[Theta]p|\[Theta]m];
-powx23[a_] := powx23[a] = powerExpr[x23v, a, \[Theta]p|\[Theta]m];
-restoreXPar[expr_] := expr /. restoreXParRule;
-restoreTh[expr_] := expr /. restoreThRule;
-restoreX13[expr_] := expr /. {
-	x[1][3]^a_ :> powx13[a],
-	x[1][3] :> x13v
-};
-restoreX23[expr_] := expr /. {
-	x[2][3]^a_ :> powx23[a],
-	x[2][3] :> x23v
-};
-
-
-expr = \[Xi]v // restoreXPar // GExpand // joinCD // CollectCD[#, Factor] &;
-expr = expr // restoreX23 // GExpand // joinCD // CollectCD[#, Factor] &;
-expr = expr // restoreX13 // GExpand // joinCD // CollectCD[#, Factor] &
-
-
-expr = \[Phi]v // restoreXPar // GExpand // joinCD // CollectCD[#, Factor] &;
-expr = expr // restoreX23 // GExpand // joinCD // CollectCD[#, Factor] &;
-expr = expr // restoreX13 // GExpand // joinCD // CollectCD[#, Factor] &
-
-
-expr = th12v // restoreXPar // GExpand // joinCD // CollectCD[#, Factor] &;
-expr = expr // restoreX23 // GExpand // joinCD // CollectCD[#, Factor] &;
-expr = expr // restoreX13 // GExpand // joinCD // CollectCD[#, Factor] &;
-expr = expr // restoreTh // GExpand // joinCD // CollectCD[#, Factor] &
-
-
-randR = Flatten @ Table[x[i][\[Mu]] -> RandomReal[], {i, 2}, {\[Mu], d}];
-invAns = (
-	+ \[Xi]v
-	+ th12v g[\[Xi], \[Phi]]
-	(* - 2 th12v \[CenterDot] (-1+\[Phi]v) \[CenterDot] powerExpr[\[Phi]v, -1, \[Theta]p|\[Theta]m] *)
-) // GExpand // CollectCD;
-GD[f_[\[Xi], \[Phi]], a_] := (
-	+ D[f[\[Xi], \[Phi]], \[Xi]] GD[\[Xi]v, a]
-	+ D[f[\[Xi], \[Phi]], \[Phi]] GD[\[Phi]v, a]
-);
-
-
-{
-	\[ScriptCapitalD]d[1, 2][invAns],
-	\[ScriptCapitalP]d[1][1, 2][invAns],
-	\[ScriptCapitalP]d[2][1, 2][invAns],
-	\[ScriptCapitalQ]pd[1][1, 2][invAns] + \[ScriptCapitalQ]md[2][1, 2][invAns],
-	\[ScriptCapitalQ]pd[2][1, 2][invAns] + \[ScriptCapitalQ]md[1][1, 2][invAns],
-	\[ScriptCapitalM]d[1, 2][1, 2][invAns],
-	\[ScriptCapitalD]pd[1][1][invAns],
-	\[ScriptCapitalD]pd[2][1][invAns],
-	\[ScriptCapitalD]md[1][2][invAns],
-	\[ScriptCapitalD]md[2][2][invAns]
-} /. {\[CapitalDelta][_]|r[_] -> 0} /. randR // GExpand // Chop
-
-
-expr = {
-	\[ScriptCapitalK]d[1][1, 2][invAns],
-	\[ScriptCapitalK]d[2][1, 2][invAns]
-} /. {\[CapitalDelta][_]|r[_] -> 0} // GExpand;
-
-
-expr /. {\[Theta]p[_][_]|\[Theta]m[_][_] :> 0}
-
-
-expr2 = expr // restoreXPar // GExpand // joinCD // CollectCD[#, Factor] &;
-
-
-expr2 = expr2 // restoreX23 // GExpand // joinCD // CollectCD[#, Factor] &;
-
-
-expr2 = expr2 // restoreX13 // GExpand // joinCD // CollectCD[#, Simplify] &;
-
-
-expr2 = expr2 // restoreTh // GExpand // joinCD // CollectCD[#, Collect[#, \[CapitalTheta], Simplify] &] &
-
-
-Solve[(-(2/\[Phi])+2 \[Phi]+g[\[Xi],\[Phi]]+\[Phi] g[\[Xi],\[Phi]]) == 0, g[\[Xi], \[Phi]]]
-
-
-c1 = Coefficient[expr, g[\[Eta],\[Xi],\[Phi]]];
-c2 = Coefficient[expr, \!\(\*SuperscriptBox[\(g\), 
-TagBox[
-RowBox[{"(", 
-RowBox[{"0", ",", "0", ",", "1"}], ")"}],
-Derivative],
-MultilineFunction->None]\)[\[Eta],\[Xi],\[Phi]]];
-c3 = expr /. {g[\[Eta],\[Xi],\[Phi]] -> 0, \!\(\*SuperscriptBox[\(g\), 
-TagBox[
-RowBox[{"(", 
-RowBox[{"0", ",", "0", ",", "1"}], ")"}],
-Derivative],
-MultilineFunction->None]\)[\[Eta],\[Xi],\[Phi]] -> 0};
-
-
-Sort
-
-
-c1 // CollectCD[#, Simplify] &
-Cases[%, HoldPattern[CenterDot[__]], Infinity] // SortBy[#, Length] &
--\[Theta]p[1][2] \[CenterDot] \[Theta]m[2][2]
-\[Theta]v // CollectCD[#, Simplify] &
-
-
-{c1, c2, c3} /. (\[Theta]m|\[Theta]p)[_][_] :> 0
-
-
-c1 \[CenterDot] c1 // GExpand
-% \[CenterDot] c1 // GExpand
-
-
-
- 
-
-
-Cases[expr, f_[\[Eta],\[Xi],\[Phi]], Infinity] // DeleteDuplicates // Sort
-Cases[expr2, f_[\[Eta],\[Xi],\[Phi]], Infinity] // DeleteDuplicates // Sort
-
-
-expr // GExpand
-
-
-expr2 = (expr /. randR) // GExpand // CollectCD[#, Factor] & // Chop
-
-
-expr /. {
-	\!\(\*SuperscriptBox[\(f\), 
-TagBox[
-RowBox[{"(", 
-RowBox[{"0", ",", "0", ",", "1"}], ")"}],
-Derivative],
-MultilineFunction->None]\)[\[Eta],\[Xi],\[Phi]] :> 0,
-	\!\(\*SuperscriptBox[\(f\), 
-TagBox[
-RowBox[{"(", 
-RowBox[{"0", ",", "1", ",", "0"}], ")"}],
-Derivative],
-MultilineFunction->None]\)[\[Eta],\[Xi],\[Phi]] -> 0,
-	\!\(\*SuperscriptBox[\(f\), 
-TagBox[
-RowBox[{"(", 
-RowBox[{"1", ",", "0", ",", "0"}], ")"}],
-Derivative],
-MultilineFunction->None]\)[\[Eta],\[Xi],\[Phi]] -> 1,
-	\[Theta]m[1][_] -> 0,
-	\[Theta]p[2][_] -> 0,
-	\[Theta]p[1][1] -> 0,
-	\[Theta]m[2][1] -> 0
-} // GExpand // CollectCD[#, Collect[#, f_[\[Eta],\[Xi],\[Phi]], Simplify] &] & // FullSimplify
-Solve[% == 0, \!\(\*SuperscriptBox[\(g\), 
-TagBox[
-RowBox[{"(", 
-RowBox[{"0", ",", "0", ",", "1"}], ")"}],
-Derivative],
-MultilineFunction->None]\)[\[Eta],\[Xi],\[Phi]]] // ExpandAll // FullSimplify
-
-
-{\[Eta]v, \[Xi]v, \[Phi]v, \[Theta]v, \[Eta]v\[CenterDot]\[Eta]v\[CenterDot]\[Xi]v\[CenterDot]\[Theta]v};
- expr  /. {
-	\!\(\*SuperscriptBox[\(f\), 
-TagBox[
-RowBox[{"(", 
-RowBox[{"0", ",", "0", ",", "1"}], ")"}],
-Derivative],
-MultilineFunction->None]\)[\[Eta],\[Xi],\[Phi]] :> 0,
-	(* (f^(0,1,0))[\[Eta],\[Xi],\[Phi]] \[Rule] 0,
-	(f^(1,0,0))[\[Eta],\[Xi],\[Phi]] \[Rule] 1, *)
-	\[Theta]m[1][_] -> 0,
-	\[Theta]p[2][_] -> 0,
-	\[Theta]p[1][1] -> 0,
-	\[Theta]m[2][1] -> 0,
-	x[2][2] -> 0,
-	x[2][1] -> 1,
-	x[2][3] -> 0
-	(* x[1][2] \[Rule] 0 *) 
-} // GExpand // CollectCD[#, Collect[#, f_[\[Eta],\[Xi],\[Phi]], Simplify] &] & // FullSimplify
-eqs = % //. {
-	x[1][1]->\[Eta] \[Phi],
-	x[1][2]->-Sqrt[1-\[Eta]^2] \[Phi],
-	x[1][3]->-Sqrt[-1+(2 \[Eta]+\[Xi]-\[Phi]) \[Phi]],
-	\[Theta]m[2][2]\[CenterDot]\[Theta]p[1][2] -> - \[Theta] Sqrt[\[Phi]]
-} // FullSimplify[#, \[Phi] > 0] &
-
-
-part1 = ExpandAll[eqs] /. Complex[0,_] :> 0
-part2 = I (eqs - part1) // ExpandAll // Collect[#, f_[\[Eta],\[Xi],\[Phi]], Simplify] &
-
-
-Sqrt[\[Phi]] part1 // FullSimplify[#, \[Phi]>0] &
-
-
--((I Sqrt[1-\[Eta]^2] \[Theta] \[Xi] \!\(\*SuperscriptBox[\(f\), 
-TagBox[
-RowBox[{"(", 
-RowBox[{"0", ",", "1", ",", "0"}], ")"}],
-Derivative],
-MultilineFunction->None]\)[\[Eta],\[Xi],\[Phi]])/Sqrt[\[Phi]])//FullForm
-
-
-Solve[{x[1][1]^2+x[1][2]^2 == \[Phi]^2,
-	x[1][1] == \[Eta] \[Phi]}, {x[1][1], x[1][2]}] // FullSimplify[#, \[Phi] > 0] &
-
-
-Solve[((-0.7542488804229955`- 0.6844321255037191` I) g[\[Eta],\[Xi],\[Phi]]+(0.5615845786213401` +0.5059996357207578` I) \!\(\*SuperscriptBox[\(f\), 
-TagBox[
-RowBox[{"(", 
-RowBox[{"0", ",", "1", ",", "0"}], ")"}],
-Derivative],
-MultilineFunction->None]\)[\[Eta],\[Xi],\[Phi]]+(0.013202407892695826` -0.016405453808335926` I) \!\(\*SuperscriptBox[\(f\), 
-TagBox[
-RowBox[{"(", 
-RowBox[{"1", ",", "0", ",", "0"}], ")"}],
-Derivative],
-MultilineFunction->None]\)[\[Eta],\[Xi],\[Phi]])==0, g[\[Eta],\[Xi],\[Phi]]] // Expand
-
-
-inv1 = (
-	(z1\[CenterDot]zt1 + z2\[CenterDot]zt2)
-	\[CenterDot] powerExpr[z1\[CenterDot]z1 + z2\[CenterDot]z2, -1/2, \[Theta]p|\[Theta]m]
-	\[CenterDot] powerExpr[zt1\[CenterDot]zt1 + zt2\[CenterDot]zt2, -1/2, \[Theta]p|\[Theta]m]
-	+ kk[1] \[Theta]p[1][2] \[CenterDot] \[Theta]m[2][2] \[CenterDot] z3
-	\[CenterDot] powerExpr[z1\[CenterDot]z1 + z2\[CenterDot]z2, -1/2, \[Theta]p|\[Theta]m]
-	\[CenterDot] powerExpr[zt1\[CenterDot]zt1 + zt2\[CenterDot]zt2, -1/2, \[Theta]p|\[Theta]m]
-	+ kk[2] \[Theta]p[1][2] \[CenterDot] \[Theta]m[2][2]
-	\[CenterDot] powerExpr[z1\[CenterDot]z1 + z2\[CenterDot]z2, -1/2, \[Theta]p|\[Theta]m]
-	+ kk[3] \[Theta]p[1][2] \[CenterDot] \[Theta]m[2][2]
-	\[CenterDot] powerExpr[zt1\[CenterDot]zt1 + zt2\[CenterDot]zt2, -1/2, \[Theta]p|\[Theta]m]
-) // GExpand // CollectCD[#, Factor] &;
-
-
-\[ScriptCapitalK]d[3][1, 2][inv1] /. {\[CapitalDelta][_] -> 0, r[_] -> 0} /. randR // GExpand // CollectCD // Chop
-
-
-%/.a->-0.0319750237819319`+ 0.17593357165724927` I // CollectCD // Chop
-
-
-Solve[((-0.0008673567763213819`- 0.0018491848350067341` I)+(0.009307262479505255` -0.006621571451512355` I) a)==0, a]
-
-
-randR = Flatten @ Table[x[i][\[Mu]] -> RandomReal[], {i, 2}, {\[Mu], d}];
-
-
-(* ::Subsubsection::Closed:: *)
-(*Understand bosonic*)
-
-
-\[Eta]v = (
-	(z1\[CenterDot]zt1 + z2\[CenterDot]zt2)
-	\[CenterDot] powerExpr[z1\[CenterDot]z1 + z2\[CenterDot]z2, -1, \[Theta]p|\[Theta]m]
-) /. {\[Theta]p[_][_]|\[Theta]m[_][_] :> 0} // Expand // FullSimplify
-\[Phi]v = (
-	(zt1\[CenterDot]zt1 + zt2\[CenterDot]zt2)
-	\[CenterDot] powerExpr[z1\[CenterDot]z1 + z2\[CenterDot]z2, -1, \[Theta]p|\[Theta]m]
-) /. {\[Theta]p[_][_]|\[Theta]m[_][_] :> 0} // Expand // FullSimplify
-\[Xi]v = (
-	z3\[CenterDot]z3
-	\[CenterDot] powerExpr[z1\[CenterDot]z1 + z2\[CenterDot]z2, -1, \[Theta]p|\[Theta]m]
-) /. {\[Theta]p[_][_]|\[Theta]m[_][_] :> 0} // Expand // FullSimplify
-
-
-restore = Solve[{\[Eta]v == \[Eta], \[Phi]v == \[Phi], \[Xi]v == \[Xi], x[2][1] == 1, x[2][2] == 1, x[2][3] == 0}, {x[1][1], x[1][2], x[1][3], x[2][1], x[2][2], x[2][3]}] // First // Simplify
-
-
-randR = Flatten @ Table[x[i][\[Mu]] -> RandomReal[], {i, 2}, {\[Mu], d}];
-bosAns = (
-	+ f[\[Eta], \[Xi], \[Phi]]
-	+ \[Theta]v g[\[Eta], \[Xi], \[Phi]]
-	(*+ \[Eta]v
-	+ \[Theta]v g[\[Eta], \[Xi], \[Phi]]*)
-);
-GD[f_[\[Eta], \[Xi], \[Phi]], a_] := (
-	+ D[f[\[Eta], \[Xi], \[Phi]], \[Eta]] GD[\[Eta]v, a]
-	+ D[f[\[Eta], \[Xi], \[Phi]], \[Xi]] GD[\[Xi]v, a]
-	+ D[f[\[Eta], \[Xi], \[Phi]], \[Phi]] GD[\[Phi]v, a]
-);
-
-
-expr = (
-	\[ScriptCapitalK]d[3][1, 2][bosAns] 
-	/. {\[CapitalDelta][_]|r[_] -> 0}
-	/. (\[Theta]m|\[Theta]p)[_][_]:>0
-	(* /. (g^(0,0,1))[\[Eta],\[Xi],\[Phi]] \[Rule] 0 *)
-) // GExpand // Collect[#, f_[\[Eta], \[Xi], \[Phi]], Simplify] &
-
-
-expr /. restore // Simplify
-
-
-DSolve[(2 \[Phi] \!\(\*SuperscriptBox[\(f\), 
-TagBox[
-RowBox[{"(", 
-RowBox[{"0", ",", "0", ",", "1"}], ")"}],
-Derivative],
-MultilineFunction->None]\)[\[Eta],\[Xi],\[Phi]]+(1+\[Xi]-\[Phi]) \!\(\*SuperscriptBox[\(f\), 
-TagBox[
-RowBox[{"(", 
-RowBox[{"0", ",", "1", ",", "0"}], ")"}],
-Derivative],
-MultilineFunction->None]\)[\[Eta],\[Xi],\[Phi]]+\[Eta] \!\(\*SuperscriptBox[\(f\), 
-TagBox[
-RowBox[{"(", 
-RowBox[{"1", ",", "0", ",", "0"}], ")"}],
-Derivative],
-MultilineFunction->None]\)[\[Eta],\[Xi],\[Phi]])==0, f[\[Eta],\[Xi],\[Phi]], {\[Eta], \[Xi], \[Phi]}]
-
-
--((-1-\[Xi]v-\[Phi]v)/Sqrt[\[Phi]v]) // FullSimplify[#, x[1][1]^2+x[1][2]^2 > 0] &
-\[Eta]v/Sqrt[\[Phi]v] // FullSimplify[#, x[1][1]^2+x[1][2]^2 > 0] &
-
-
-
-
-
-(* ::Subsection::Closed:: *)
-(*Invariant intervals Boundary  \[LeftAngleBracket] \[Phi] Oh Oh \[RightAngleBracket] using frame*)
-
-
-mypowerExpr[expr_, pow_] := powerExpr[expr, pow, (\[Theta]p|\[Theta]m)];
-inversion[{x1_, x2_, x3_, \[Theta]p1_, \[Theta]p2_, \[Theta]m1_, \[Theta]m2_}] := Module[{x, \[Theta]p, \[Theta]m, \[Theta]4, deninv},
-	x[1] = x1; x[2] = x2; x[3] = x3;
-	\[Theta]p[1] = \[Theta]p1; \[Theta]p[2] = \[Theta]p2;
-	\[Theta]m[1] = \[Theta]m1; \[Theta]m[2] = \[Theta]m2;
-	\[Theta]4 = \[Theta]p[1] \[CenterDot] \[Theta]p[2] \[CenterDot] \[Theta]m[1] \[CenterDot] \[Theta]m[2];
-	deninv = mypowerExpr[Sum[x[\[Nu]]\[CenterDot]x[\[Nu]], {\[Nu], d}] + 1/2 \[Theta]4, -1];
-	Join[
-		Table[x[\[Mu]] \[CenterDot] deninv, {\[Mu], 3}],
-		Table[(
-			- 1/2 \[Theta]p[\[Alpha]d] \[CenterDot] Sum[\[Theta]p[\[Beta]]\[CenterDot]\[Theta]m[\[Beta]], {\[Beta], 2}]
-			+ Sum[\[CapitalSigma]b[\[Mu]][\[Alpha]d, \[Beta]d] x[\[Mu]] \[CenterDot] \[Theta]p[\[Beta]d], {\[Mu], 3}, {\[Beta]d, 2}]) \[CenterDot] deninv
-		, {\[Alpha]d, 2}],
-		Table[(
-			- 1/2 \[Theta]m[\[Alpha]] \[CenterDot] Sum[\[Theta]p[\[Beta]]\[CenterDot]\[Theta]m[\[Beta]], {\[Beta], 2}]
-			- Sum[\[CapitalSigma]b[\[Mu]][\[Beta], \[Alpha]] x[\[Mu]] \[CenterDot] \[Theta]m[\[Beta]], {\[Mu], 3}, {\[Beta], 2}]) \[CenterDot] deninv
-		, {\[Alpha], 2}]
-	] // GExpand // CollectCD
-];
-translation[{a1_, a2_, a3_}][{x1_, x2_, x3_, args__}] := {x1+a1, x2+a2, x3+a3, args};
-superTransPM[{\[Xi]p1_, \[Xi]p2_, \[Xi]m1_, \[Xi]m2_}][{x1_, x2_, x3_, \[Theta]p1_, \[Theta]p2_, \[Theta]m1_, \[Theta]m2_}] := 
-	Module[{x, \[Theta]p, \[Theta]m, \[Xi]p, \[Xi]m},
-		x[1] = x1; x[2] = x2; x[3] = x3;
-		\[Theta]p[1] = \[Theta]p1; \[Theta]p[2] = \[Theta]p2;
-		\[Theta]m[1] = \[Theta]m1; \[Theta]m[2] = \[Theta]m2;
-		\[Xi]p[1] = \[Xi]p1; \[Xi]p[2] = \[Xi]p2;
-		\[Xi]m[1] = \[Xi]m1; \[Xi]m[2] = \[Xi]m2;
-		Flatten @ {
-			Table[
-				+ x[\[Mu]] 
-				- 1/2 Sum[\[CapitalSigma][\[Mu]][\[Alpha], \[Alpha]d] \[Xi]p[\[Alpha]d] \[CenterDot] \[Theta]m[\[Alpha]],  {\[Alpha], 2}, {\[Alpha]d, 2}]
-				- 1/2 Sum[\[CapitalSigma][\[Mu]][\[Alpha], \[Alpha]d] \[Xi]m[\[Alpha]]  \[CenterDot] \[Theta]p[\[Alpha]d], {\[Alpha], 2}, {\[Alpha]d, 2}]
-			, {\[Mu], 3}],
-			Table[\[Theta]p[\[Alpha]d] + \[Xi]p[\[Alpha]d], {\[Alpha]d, 2}],
-			Table[\[Theta]m[\[Alpha]]  + \[Xi]m[\[Alpha]],  {\[Alpha],  2}]
-		}
-	];
-superTransP[{\[Xi]p1_, \[Xi]p2_}][{args__}] := superTransPM[{\[Xi]p1, \[Xi]p2, 0, 0}][{args}]
-superTransM[{\[Xi]m1_, \[Xi]m2_}][{args__}] := superTransPM[{0, 0, \[Xi]m1, \[Xi]m2}][{args}]
-
-
-pt[i_] := {x[i][1], x[i][2], x[i][3], \[Theta]p[i][1], \[Theta]p[i][2], \[Theta]m[i][1], \[Theta]m[i][2]};
-lst = {xinv[1][1], xinv[1][2], xinv[1][3], \[Theta]pinv[1][1], \[Theta]pinv[1][2], \[Theta]minv[1][1], \[Theta]minv[1][2]};
-inversion[pt[1]] - lst // GExpand // CollectCD
-
-
-pt3 = pt[3] /. {\[Theta]m[i_][1] :> \[Theta]p[i][2], \[Theta]m[i_][2] :> \[Theta]p[i][1], x[i_][3] -> 0}
-
-
-expr = inversion[pt3]
-\[Xi]s = expr[[4;;]];
-invPts12 = Append[expr[[1;;2]], 0];
-expr = superTransPM[-\[Xi]s][expr]
-expr2 = translation[-eps invPts12][expr]
-expr2 = inversion[expr2] // GExpand // CollectCD[#, Factor] &
-expr2 /. eps -> 1
-
-
-expr = inversion[pt[1]] // GExpand // CollectCD[#, Factor] &;
-expr = superTransPM[-\[Xi]s][expr] // GExpand // CollectCD[#, Factor] &;
-expr2 = translation[-invPts12][expr] // GExpand // CollectCD[#, Factor] &;
-expr2 = inversion[expr2] // GExpand // CollectCD[#, Factor] &
-
-
-expr3 = expr2 /. (\[Theta]m|\[Theta]p)[_][_] :> 0 /. x[i_][\[Mu]_] /; 1<=\[Mu]<=2 :> (x[i][\[Mu]]-x[2][\[Mu]]);
-{xx1, xx2, xx3, asdf, asdf, asdf, asdf} = expr3 ;
-inv = (xx1^2 + xx2^2) / xx3^2 // Factor // FullSimplify
-
-
-\[ScriptCapitalK]d[1][1, 2, 3][inv] /. {(\[Theta]m|\[Theta]p)[_][_] :> 0, \[CapitalDelta][_]:> 0} /. x[2|3][3] :> 0 // Together
-
-
-(* ::Subsection::Closed:: *)
-(*Invariant intervals Boundary  \[LeftAngleBracket] \[Phi] Oh Oh \[RightAngleBracket]*)
-
-
-joinCD[expr_] := (
-	expr //. {a_CenterDot^b_ :> 0}
-		 //. {a_Plus?(Not@FreeQ[#,CenterDot]&) b_ :> GExpand[a\[CenterDot]b]}
-		 //. {a_CenterDot b_?(Not@FreeQ[#, \[Theta]p|\[Theta]m|th12|th13]&) :> a\[CenterDot]b}
-);
-
-
-(* ::Text:: *)
-(*Invariant respect covariant derivatives*)
-
-
-SetNumeric[a];
-Clear[y];
-yV[i_][\[Mu]_]  := x[i][\[Mu]] - 1/2 Sum[\[CapitalSigma][\[Mu]][\[Alpha], \[Alpha]d] \[Theta]m[i][\[Alpha]]\[CenterDot]\[Theta]p[i][\[Alpha]d], {\[Alpha], 2}, {\[Alpha]d, 2}];
-restoreY = First @ Solve[{
-	yV[1][1] == y[1][1],
-	yV[1][2] == y[1][2]
-}, {x[1][1], x[1][2]}];
-Join[
-	Table[\[ScriptCapitalD]pd[\[Alpha]][1][yV[1][\[Mu]]], {\[Mu], d}, {\[Alpha], 2}],
-	Table[\[ScriptCapitalD]pd[\[Alpha]][1][\[Theta]p[1][\[Alpha]d]], {\[Alpha], 2}, {\[Alpha]d, 2}]
-] // Flatten // DeleteDuplicates
-
-
-(* ::Text:: *)
-(*Parallel coordinates to bdy*)
-
-
-\[Theta]par[i_][1] := \[Theta]m[i][1] + \[Theta]p[i][2];
-\[Theta]par[i_][2] := \[Theta]m[i][2] + \[Theta]p[i][1];
-
-
-projectToBdy = {
-	\[Theta]p[2][2] -> \[Theta]m[2][1],
-	\[Theta]p[2][1] -> \[Theta]m[2][2],
-	\[Theta]p[3][2] -> \[Theta]m[3][1],
-	\[Theta]p[3][1] -> \[Theta]m[3][2],
-	x[2][3] -> 0,
-	x[3][3] -> 0
-};
-
-
-(* ::Text:: *)
-(*Find invariant respect \[ScriptCapitalQ] and \[ScriptCapitalP]*)
-
-
-th12V[1] = \[Theta]p[1][1] - 1/2 \[Theta]par[2][2];
-th12V[2] = \[Theta]p[1][2] - 1/2 \[Theta]par[2][1];
-th13V[1] = \[Theta]p[1][1] - 1/2 \[Theta]par[3][2];
-th13V[2] = \[Theta]p[1][2] - 1/2 \[Theta]par[3][1];
-x12V = y[1][1] - x[2][1] - 1/2   (\[Theta]p[1][1] \[CenterDot] \[Theta]par[2][2] + \[Theta]p[1][2] \[CenterDot] \[Theta]par[2][1]);
-x13V = y[1][1] - x[3][1] - 1/2   (\[Theta]p[1][1] \[CenterDot] \[Theta]par[3][2] + \[Theta]p[1][2] \[CenterDot] \[Theta]par[3][1]);
-y12V = y[1][2] - x[2][2] - 1/2 I (\[Theta]p[1][1] \[CenterDot] \[Theta]par[2][2] - \[Theta]p[1][2] \[CenterDot] \[Theta]par[2][1]);
-y13V = y[1][2] - x[3][2] - 1/2 I (\[Theta]p[1][1] \[CenterDot] \[Theta]par[3][2] - \[Theta]p[1][2] \[CenterDot] \[Theta]par[3][1]);
-z1V  = y[1][3] - \[Theta]p[1][1] \[CenterDot] \[Theta]p[1][2];
-
-
-Fermion[th12[_], th13[_]];
-GD[x12, a_] := GD[x12V, a]
-GD[x13, a_] := GD[x13V, a]
-GD[y12, a_] := GD[y12V, a]
-GD[y13, a_] := GD[y13V, a]
-GD[z1, a_] := GD[z1V, a]
-GD[th12[i_], a_] := GD[th12V[i], a]
-GD[th13[i_], a_] := GD[th13V[i], a]
-
-
-restoreDiffs1 = GExpand @ First @ Solve[({
-	x12V == x12,
-	x13V == x13,
-	y12V == y12,
-	y13V == y13,
-	z1V == z1
-} /. projectToBdy), {x[2][1], x[3][1], x[2][2], x[3][2], x[1][3]}]
-restoreDiffs2 = GExpand @ First @ Solve[({
-	th12[1] == th12V[1],
-	th12[2] == th12V[2],
-	th13[1] == th13V[1],
-	th13[2] == th13V[2]
-} /. projectToBdy), {\[Theta]m[2][1], \[Theta]m[2][2], \[Theta]m[3][1], \[Theta]m[3][2]}]
-restoreDiffs = Join[restoreDiffs1, restoreDiffs2] // GExpand;
-
-
-invs = {x12, x13, y12, y13, z1, th12[1], th12[2], th13[1], th13[2]};
-{
-	\[ScriptCapitalQ]pd[1][1, 2, 3][invs] + \[ScriptCapitalQ]md[2][1, 2, 3][invs],
-	\[ScriptCapitalQ]pd[2][1, 2, 3][invs] + \[ScriptCapitalQ]md[1][1, 2, 3][invs],
-	\[ScriptCapitalP]d[1][1, 2, 3][invs],
-	\[ScriptCapitalP]d[2][1, 2, 3][invs]
-} // Collect[#, \[Theta]m[_][_]|\[Theta]p[_][_], Factor] &
-
-
-(* SetNumeric[kk[_]];
-ansatz = (
-	+ kk[1] (\[Theta]p[1][1] - 1/2 \[Theta]par[2][2])
-	+ kk[2] (\[Theta]p[1][1] - 1/2 \[Theta]par[3][2])
-	+ kk[3] (\[Theta]p[1][2] - 1/2 \[Theta]par[2][1])
-	+ kk[4] (\[Theta]p[1][2] - 1/2 \[Theta]par[3][1])
-	+ kk[5] (y[1][3] - \[Theta]p[1][1] \[CenterDot] \[Theta]p[1][2])
-	+ kk[6] (y[1][1] - x[2][1] - 1/2   (\[Theta]p[1][1] \[CenterDot] \[Theta]par[2][2] + \[Theta]p[1][2] \[CenterDot] \[Theta]par[2][1]))
-	+ kk[7] (y[1][2] - x[2][2] - 1/2 I (\[Theta]p[1][1] \[CenterDot] \[Theta]par[2][2] - \[Theta]p[1][2] \[CenterDot] \[Theta]par[2][1]))
-	+ kk[8] (y[1][1] - x[3][1] - 1/2   (\[Theta]p[1][1] \[CenterDot] \[Theta]par[3][2] + \[Theta]p[1][2] \[CenterDot] \[Theta]par[3][1]))
-	+ kk[9] (y[1][2] - x[3][2] - 1/2 I (\[Theta]p[1][1] \[CenterDot] \[Theta]par[3][2] - \[Theta]p[1][2] \[CenterDot] \[Theta]par[3][1]))
-);
-{
-	\[ScriptCapitalQ]pd[1][1, 2, 3][ansatz] + \[ScriptCapitalQ]md[2][1, 2, 3][ansatz],
-	\[ScriptCapitalQ]pd[2][1, 2, 3][ansatz] + \[ScriptCapitalQ]md[1][1, 2, 3][ansatz],
-	\[ScriptCapitalP]d[1][1, 2, 3][ansatz],
-	\[ScriptCapitalP]d[2][1, 2, 3][ansatz]
-} // Collect[#, \[Theta]m[_][_]|\[Theta]p[_][_], Factor] & *)
-
-
-(* ::Text:: *)
-(*Require invariance under \[ScriptCapitalM]*)
-
-
-xSq12V = x12 x12 + y12 y12;
-xSq13V = x13 x13 + y13 y13;
-x1213V = x12 x13 + y12 y13;
-GD[xSq12, a_] := GD[xSq12V, a]
-GD[xSq13, a_] := GD[xSq13V, a]
-GD[x1213, a_] := GD[x1213V, a]
-restoreSqs = Solve[{
-	xSq12 == xSq12V,
-	xSq13 == xSq13V,
-	x1213 == x1213V,
-	y13 == 0
-}, {x12, y12, x13, y13}] // First // Simplify;
-
-
-{
-	\[ScriptCapitalM]d[1, 2][1, 2, 3][z1],
-	\[ScriptCapitalM]d[1, 2][1, 2, 3][xSq12],
-	\[ScriptCapitalM]d[1, 2][1, 2, 3][xSq13],
-	\[ScriptCapitalM]d[1, 2][1, 2, 3][x1213],
-	\[ScriptCapitalM]d[1, 2][1, 2, 3][th12[1]\[CenterDot]th12[2]],
-	\[ScriptCapitalM]d[1, 2][1, 2, 3][th13[1]\[CenterDot]th13[2]],
-	\[ScriptCapitalM]d[1, 2][1, 2, 3][th12[1]\[CenterDot]th13[2]],
-	\[ScriptCapitalM]d[1, 2][1, 2, 3][th13[1]\[CenterDot]th12[2]]
-} /. projectToBdy //. restoreDiffs // GExpand // joinCD // (# /. Times -> CenterDot &)
-
-
-ratio1V = 1 + xSq12 / z1^2;
-ratio2V = 1 + xSq13 / z1^2;
-ratio3V = (xSq12 - 2 x1213 + xSq13) / z1^2;
-restoreRatios = {
-	xSq12 -> (ratio1 - 1) z1^2,
-	xSq13 -> (ratio2 - 1) z1^2,
-	x1213 -> -1/2(ratio3 - ratio1 - ratio2 + 2) z1^2
-};
-GD[f_[ratio1, ratio2, ratio3], a_] := (
-	+ D[f[ratio1, ratio2, ratio3], ratio1] GD[ratio1, a]
-	+ D[f[ratio1, ratio2, ratio3], ratio2] GD[ratio2, a]
-	+ D[f[ratio1, ratio2, ratio3], ratio3] GD[ratio3, a]
-);
-GD[ratio1, a_] := GD[ratio1V, a]
-GD[ratio2, a_] := GD[ratio2V, a]
-GD[ratio3, a_] := GD[ratio3V, a]
-
-
-invAns = (
-	+ ratio3 / (ratio1 ratio2)
-	+ th12[1]\[CenterDot]th12[2] / z1 f1[ratio1, ratio2, ratio3]
-	+ th13[1]\[CenterDot]th12[2] / z1 f2[ratio1, ratio2, ratio3]
-	+ th12[1]\[CenterDot]th13[2] / z1 f3[ratio1, ratio2, ratio3]
-	+ th13[1]\[CenterDot]th13[2] / z1 f4[ratio1, ratio2, ratio3]
-);
-
-
-{
-	\[ScriptCapitalD]d[1, 2, 3][invAns],
-	\[ScriptCapitalP]d[1][1, 2, 3][invAns],
-	\[ScriptCapitalP]d[2][1, 2, 3][invAns],
-	\[ScriptCapitalM]d[1, 2][1, 2, 3][invAns],
-	\[ScriptCapitalQ]pd[1][1, 2, 3][invAns] + \[ScriptCapitalQ]md[2][1, 2, 3][invAns],
-	\[ScriptCapitalQ]pd[2][1, 2, 3][invAns] + \[ScriptCapitalQ]md[1][1, 2, 3][invAns],
-	\[ScriptCapitalD]pd[1][1][invAns],
-	\[ScriptCapitalD]pd[2][1][invAns]
-} /. (r|\[CapitalDelta])[_] :> 0 /. projectToBdy //. restoreDiffs /. restoreSqs /. restoreRatios // 
-	GExpand // joinCD // CollectCD[#, Simplify] &
-
-
-expr = \[ScriptCapitalK]d[1][1, 2, 3][invAns] /. (r|\[CapitalDelta])[_] :> 0 // GExpand // CollectCD;
-
-
-expr = expr /. projectToBdy //. restoreDiffs // GExpand // joinCD // CollectCD[#, 
-	Collect[#, x[1][1], Collect[#, f_[ratio1, ratio2, ratio3]] &] &] &;
-
-
-expr /. restoreY // GExpand // joinCD // CollectCD[#, 
-	Collect[#, y[1][1], Collect[#, f_[ratio1, ratio2, ratio3]] &] &] &
-
-
-expr2 = x12 / z1^2 expr /. restoreSqs /. restoreRatios // CollectCD[#, Collect[#, y[1][1], 
-	Collect[#, f_[ratio1, ratio2, ratio3], 
-		Collect[#, z1, Simplify[#, {ratio1 > 1, ratio2 > 1, ratio3 > 1, z1 > 0}] &] &] &] &] &
-
-
-thetas = {th12[2]\[CenterDot]\[Theta]p[1][1], th12[2]\[CenterDot]\[Theta]p[1][2], th12[1]\[CenterDot]\[Theta]p[1][1], th13[1]\[CenterDot]\[Theta]p[1][2]};
-eqs = Coefficient[expr2, #] & /@ thetas;
-sol = Solve[eqs==0, #[ratio1, ratio2, ratio3] & /@ {f1, f2, f3, f4}] //
-	First // Simplify[#, z1 > 0] &;
-
-
-Function[{ratio1, ratio2, ratio3}, #] & /@ (Values[sol]);
-ruleF = MapThread[#1 -> #2 &, {{f1, f2, f3, f4}, %}];
-
-
-expr2 /. ruleF /. randRules[ratio1, ratio2, ratio3, z1] // GExpand
-
-
-Solve[Coefficient[expr3, th12[2]\[CenterDot]\[Theta]p[1][2]] == 0, f2[ratio1, ratio2, ratio3]] //
-	FullSimplify[#, {ratio1 > 1, ratio2 > 1, ratio3 > 1, z1 > 0}] &
-
-
-(* ::InheritFromParent:: *)
-(*{{}}*)
-
-
-expr2 /. {
-	f1 -> (0 &),
-	f2 -> (0 &),
-	f3 -> (0 &),
-	f4 -> (0 &)
-};
-% /. randRules[ratio1, ratio2, ratio3, z1] // Expand
-
-
-(* % /. (\[Theta]p|\[Theta]m)[_][_] \[RuleDelayed] 0 // Together // Numerator // Simplify *)
-% /. ansatz /. {a|b -> -1, c -> 1} /. randRules[ratio1, ratio2, ratio3, z1]
-
-
-[#, x[1][1], 
-	Collect[#, f_[ratio1, ratio2, ratio3], 
-		Collect[#, z1, Simplify] &] &] &
-
-
-  /. (\[Theta]p|\[Theta]m)[_][_] :> 0 // GExpand // CollectCD;
-% // Collect[#, f_[ratio1, ratio2, ratio3], Simplify] &
-% /. restoreDiffs // Collect[#, x[1][1], 
-	Collect[#, f_[ratio1, ratio2, ratio3], 
-		Collect[#, z1, Simplify] &] &] &
-x12 / z1^2 % /. restoreSqs // Collect[#, x[1][1], 
-	Collect[#, f_[ratio1, ratio2, ratio3], 
-		Collect[#, z1, Simplify[#, {xSq12 > 0, xSq13 > 0, x1213 > 0}] &] &] &] &
-
-
-diffEq = % /. y13 -> 0 /.  // Collect[#, f_[ratio1, ratio2, ratio3], Simplify] &
-
-
-ansatz = f :> (#1^a #2^b #3^c &);
-diffEq / f[ratio1, ratio2, ratio3] /. ansatz // Expand // Collect[#, {ratio1, ratio2, ratio3}] &
-% // Together // Numerator // Collect[#, {ratio1, ratio2, ratio3}, Factor] &
-% /. a -> -1 /. b -> -1 /. c-> 1
-
-
-ansatz = f :> ((1+#1)^a (1+#2)^b (#1+#2-2#3)^c f[#1, #2, #3] &);
-diffEq / f[ratio1, ratio2, ratio3] /. ansatz // Expand // Collect[#, {ratio1, ratio2, ratio3}] &
-% // Together // Numerator // Collect[#, {ratio1, ratio2, ratio3}] &
-% /. a -> -1 /. b -> -1 /. c-> 1 // Collect[#, f_[ratio1, ratio2, ratio3], Simplify] &
-
-
-inv = (
-	(ratio1V+ratio2V-2ratio3V)/(ratio1V ratio2V)
-		/. {xSq12 -> xSq12V, xSq13 -> xSq13V, x1213 -> x1213V}
-		/. {x12 -> x12V, x13 -> x13V, y12 -> y12V, y13 -> y13V, z1 -> z1V}
-) /. (\[Theta]p|\[Theta]m)[_][_] :> 0 // Simplify
-inv = (
-	Sum[(x[2][\[Mu]]-x[3][\[Mu]])^2, {\[Mu], 1, 2}]
-	x[1][3]^2 / (
-	(x[1][3]^2 + Sum[(x[1][\[Mu]]-x[2][\[Mu]])^2, {\[Mu], 1, 2}])
-	(x[1][3]^2 + Sum[(x[1][\[Mu]]-x[3][\[Mu]])^2, {\[Mu], 1, 2}])
-));
-\[ScriptCapitalK]d[1][1, 2, 3][inv] /. (\[Theta]p|\[Theta]m)[_][_] :> 0 /. (\[CapitalDelta]|r)[_] :> 0 /. x[2|3][3] :> 0 // Together
-
-
-DSolve[%==0, f[ratio1, ratio2, ratio3], {ratio1, ratio2, ratio3}]
-
-
-\[Xi]v = (
-	(z1\[CenterDot]z1 + z2\[CenterDot]z2 + (z3-zt3)\[CenterDot](z3-zt3))
-	\[CenterDot] powerExpr[z3,  -1, \[Theta]p|\[Theta]m]
-	\[CenterDot] powerExpr[zt3, -1, \[Theta]p|\[Theta]m]
-) // GExpand // CollectCD[#, Factor] &;
-\[Phi]v = zt3 \[CenterDot] powerExpr[z3, -1, \[Theta]p|\[Theta]m] // GExpand // CollectCD[#, Factor] &;
-
-
-th12v = th1 \[CenterDot] th2 \[CenterDot] powerExpr[z3, -1, \[Theta]p|\[Theta]m] // GExpand // CollectCD[#, Factor] &;
-
-
-\[Xi]v /. {\[Theta]p[_][_]|\[Theta]m[_][_] :> 0} // FullSimplify
-\[Phi]v /. {\[Theta]p[_][_]|\[Theta]m[_][_] :> 0} // FullSimplify
-
-
-GExpand[th1 \[CenterDot] th2]
-
-
-joinCD[expr_] := (
-	expr //. {a_CenterDot^b_ :> 0}
-		 //. {a_Plus?(Not@FreeQ[#,CenterDot]&) b_ :> GExpand[a\[CenterDot]b]}
-		 //. {a_CenterDot b_?(Not@FreeQ[#, \[Theta]p|\[Theta]m]&) :> a\[CenterDot]b}
-);
-restoreXParRule = Solve[{z1 == zz1, z2 == zz2}, {x[1][1], x[1][2]}] // First;
-restoreThRule = {\[Theta]m[2][1] \[CenterDot] \[Theta]m[2][2] -> 
-	+ \[Theta]m[2][1] \[CenterDot] \[Theta]p[1][1]
-	- \[Theta]m[2][2] \[CenterDot] \[Theta]p[1][2]
-	+ \[Theta]p[1][1] \[CenterDot] \[Theta]p[1][2]
-	- (\[Phi] \[Xi] - (1-\[Phi])^2)^(-1/2) Sqrt[zz1^2 + zz2^2] \[CapitalTheta]
-};
-x23v = (
-	+ z3 \[Phi] 
-	+ \[Theta]m[2][1] \[CenterDot] \[Theta]m[2][2] 
-	- 1/2 Sum[\[CapitalSigma][3][\[Alpha], \[Alpha]d] \[Theta]m[2][\[Alpha]]\[CenterDot]\[Theta]p[2][\[Alpha]d], {\[Alpha], 2}, {\[Alpha]d, 2}]
-) // GExpand // CollectCD[#, Simplify] &;
-x13v = (
-	+ (\[Phi] \[Xi] - (1-\[Phi])^2)^(-1/2) Sqrt[zz1^2 + zz2^2] 
-	+ 1/2 Sum[\[CapitalSigma][3][\[Alpha], \[Alpha]d] \[Theta]m[1][\[Alpha]]\[CenterDot]\[Theta]p[1][\[Alpha]d], {\[Alpha], 2}, {\[Alpha]d, 2}]
-	+ \[Theta]p[1][1] \[CenterDot] \[Theta]p[1][2] 
-) // GExpand // CollectCD[#, Simplify] &;
-Clear[powx13, powx23];
-powx13[a_] := powx13[a] = powerExpr[x13v, a, \[Theta]p|\[Theta]m];
-powx23[a_] := powx23[a] = powerExpr[x23v, a, \[Theta]p|\[Theta]m];
-restoreXPar[expr_] := expr /. restoreXParRule;
-restoreTh[expr_] := expr /. restoreThRule;
-restoreX13[expr_] := expr /. {
-	x[1][3]^a_ :> powx13[a],
-	x[1][3] :> x13v
-};
-restoreX23[expr_] := expr /. {
-	x[2][3]^a_ :> powx23[a],
-	x[2][3] :> x23v
-};
-
-
-expr = \[Xi]v // restoreXPar // GExpand // joinCD // CollectCD[#, Factor] &;
-expr = expr // restoreX23 // GExpand // joinCD // CollectCD[#, Factor] &;
-expr = expr // restoreX13 // GExpand // joinCD // CollectCD[#, Factor] &
-
-
-expr = \[Phi]v // restoreXPar // GExpand // joinCD // CollectCD[#, Factor] &;
-expr = expr // restoreX23 // GExpand // joinCD // CollectCD[#, Factor] &;
-expr = expr // restoreX13 // GExpand // joinCD // CollectCD[#, Factor] &
-
-
-expr = th12v // restoreXPar // GExpand // joinCD // CollectCD[#, Factor] &;
-expr = expr // restoreX23 // GExpand // joinCD // CollectCD[#, Factor] &;
-expr = expr // restoreX13 // GExpand // joinCD // CollectCD[#, Factor] &;
-expr = expr // restoreTh // GExpand // joinCD // CollectCD[#, Factor] &
-
-
-randR = Flatten @ Table[x[i][\[Mu]] -> RandomReal[], {i, 2}, {\[Mu], d}];
-invAns = (
-	+ \[Xi]v
-	+ th12v g[\[Xi], \[Phi]]
-	(* - 2 th12v \[CenterDot] (-1+\[Phi]v) \[CenterDot] powerExpr[\[Phi]v, -1, \[Theta]p|\[Theta]m] *)
-) // GExpand // CollectCD;
-GD[f_[\[Xi], \[Phi]], a_] := (
-	+ D[f[\[Xi], \[Phi]], \[Xi]] GD[\[Xi]v, a]
-	+ D[f[\[Xi], \[Phi]], \[Phi]] GD[\[Phi]v, a]
-);
-
-
-{
-	\[ScriptCapitalD]d[1, 2][invAns],
-	\[ScriptCapitalP]d[1][1, 2][invAns],
-	\[ScriptCapitalP]d[2][1, 2][invAns],
-	\[ScriptCapitalQ]pd[1][1, 2][invAns] + \[ScriptCapitalQ]md[2][1, 2][invAns],
-	\[ScriptCapitalQ]pd[2][1, 2][invAns] + \[ScriptCapitalQ]md[1][1, 2][invAns],
-	\[ScriptCapitalM]d[1, 2][1, 2][invAns],
-	\[ScriptCapitalD]pd[1][1][invAns],
-	\[ScriptCapitalD]pd[2][1][invAns],
-	\[ScriptCapitalD]md[1][2][invAns],
-	\[ScriptCapitalD]md[2][2][invAns]
-} /. {\[CapitalDelta][_]|r[_] -> 0} /. randR // GExpand // Chop
-
-
-expr = {
-	\[ScriptCapitalK]d[1][1, 2][invAns],
-	\[ScriptCapitalK]d[2][1, 2][invAns]
-} /. {\[CapitalDelta][_]|r[_] -> 0} // GExpand;
-
-
-expr /. {\[Theta]p[_][_]|\[Theta]m[_][_] :> 0}
-
-
-expr2 = expr // restoreXPar // GExpand // joinCD // CollectCD[#, Factor] &;
-
-
-expr2 = expr2 // restoreX23 // GExpand // joinCD // CollectCD[#, Factor] &;
-
-
-expr2 = expr2 // restoreX13 // GExpand // joinCD // CollectCD[#, Simplify] &;
-
-
-expr2 = expr2 // restoreTh // GExpand // joinCD // CollectCD[#, Collect[#, \[CapitalTheta], Simplify] &] &
-
-
-Solve[(-(2/\[Phi])+2 \[Phi]+g[\[Xi],\[Phi]]+\[Phi] g[\[Xi],\[Phi]]) == 0, g[\[Xi], \[Phi]]]
-
-
-c1 = Coefficient[expr, g[\[Eta],\[Xi],\[Phi]]];
-c2 = Coefficient[expr, \!\(\*SuperscriptBox[\(g\), 
-TagBox[
-RowBox[{"(", 
-RowBox[{"0", ",", "0", ",", "1"}], ")"}],
-Derivative],
-MultilineFunction->None]\)[\[Eta],\[Xi],\[Phi]]];
-c3 = expr /. {g[\[Eta],\[Xi],\[Phi]] -> 0, \!\(\*SuperscriptBox[\(g\), 
-TagBox[
-RowBox[{"(", 
-RowBox[{"0", ",", "0", ",", "1"}], ")"}],
-Derivative],
-MultilineFunction->None]\)[\[Eta],\[Xi],\[Phi]] -> 0};
-
-
-Sort
-
-
-c1 // CollectCD[#, Simplify] &
-Cases[%, HoldPattern[CenterDot[__]], Infinity] // SortBy[#, Length] &
--\[Theta]p[1][2] \[CenterDot] \[Theta]m[2][2]
-\[Theta]v // CollectCD[#, Simplify] &
-
-
-{c1, c2, c3} /. (\[Theta]m|\[Theta]p)[_][_] :> 0
-
-
-c1 \[CenterDot] c1 // GExpand
-% \[CenterDot] c1 // GExpand
-
-
-
- 
-
-
-Cases[expr, f_[\[Eta],\[Xi],\[Phi]], Infinity] // DeleteDuplicates // Sort
-Cases[expr2, f_[\[Eta],\[Xi],\[Phi]], Infinity] // DeleteDuplicates // Sort
-
-
-expr // GExpand
-
-
-expr2 = (expr /. randR) // GExpand // CollectCD[#, Factor] & // Chop
-
-
-expr /. {
-	\!\(\*SuperscriptBox[\(f\), 
-TagBox[
-RowBox[{"(", 
-RowBox[{"0", ",", "0", ",", "1"}], ")"}],
-Derivative],
-MultilineFunction->None]\)[\[Eta],\[Xi],\[Phi]] :> 0,
-	\!\(\*SuperscriptBox[\(f\), 
-TagBox[
-RowBox[{"(", 
-RowBox[{"0", ",", "1", ",", "0"}], ")"}],
-Derivative],
-MultilineFunction->None]\)[\[Eta],\[Xi],\[Phi]] -> 0,
-	\!\(\*SuperscriptBox[\(f\), 
-TagBox[
-RowBox[{"(", 
-RowBox[{"1", ",", "0", ",", "0"}], ")"}],
-Derivative],
-MultilineFunction->None]\)[\[Eta],\[Xi],\[Phi]] -> 1,
-	\[Theta]m[1][_] -> 0,
-	\[Theta]p[2][_] -> 0,
-	\[Theta]p[1][1] -> 0,
-	\[Theta]m[2][1] -> 0
-} // GExpand // CollectCD[#, Collect[#, f_[\[Eta],\[Xi],\[Phi]], Simplify] &] & // FullSimplify
-Solve[% == 0, \!\(\*SuperscriptBox[\(g\), 
-TagBox[
-RowBox[{"(", 
-RowBox[{"0", ",", "0", ",", "1"}], ")"}],
-Derivative],
-MultilineFunction->None]\)[\[Eta],\[Xi],\[Phi]]] // ExpandAll // FullSimplify
-
-
-{\[Eta]v, \[Xi]v, \[Phi]v, \[Theta]v, \[Eta]v\[CenterDot]\[Eta]v\[CenterDot]\[Xi]v\[CenterDot]\[Theta]v};
- expr  /. {
-	\!\(\*SuperscriptBox[\(f\), 
-TagBox[
-RowBox[{"(", 
-RowBox[{"0", ",", "0", ",", "1"}], ")"}],
-Derivative],
-MultilineFunction->None]\)[\[Eta],\[Xi],\[Phi]] :> 0,
-	(* (f^(0,1,0))[\[Eta],\[Xi],\[Phi]] \[Rule] 0,
-	(f^(1,0,0))[\[Eta],\[Xi],\[Phi]] \[Rule] 1, *)
-	\[Theta]m[1][_] -> 0,
-	\[Theta]p[2][_] -> 0,
-	\[Theta]p[1][1] -> 0,
-	\[Theta]m[2][1] -> 0,
-	x[2][2] -> 0,
-	x[2][1] -> 1,
-	x[2][3] -> 0
-	(* x[1][2] \[Rule] 0 *) 
-} // GExpand // CollectCD[#, Collect[#, f_[\[Eta],\[Xi],\[Phi]], Simplify] &] & // FullSimplify
-eqs = % //. {
-	x[1][1]->\[Eta] \[Phi],
-	x[1][2]->-Sqrt[1-\[Eta]^2] \[Phi],
-	x[1][3]->-Sqrt[-1+(2 \[Eta]+\[Xi]-\[Phi]) \[Phi]],
-	\[Theta]m[2][2]\[CenterDot]\[Theta]p[1][2] -> - \[Theta] Sqrt[\[Phi]]
-} // FullSimplify[#, \[Phi] > 0] &
-
-
-part1 = ExpandAll[eqs] /. Complex[0,_] :> 0
-part2 = I (eqs - part1) // ExpandAll // Collect[#, f_[\[Eta],\[Xi],\[Phi]], Simplify] &
-
-
-Sqrt[\[Phi]] part1 // FullSimplify[#, \[Phi]>0] &
-
-
--((I Sqrt[1-\[Eta]^2] \[Theta] \[Xi] \!\(\*SuperscriptBox[\(f\), 
-TagBox[
-RowBox[{"(", 
-RowBox[{"0", ",", "1", ",", "0"}], ")"}],
-Derivative],
-MultilineFunction->None]\)[\[Eta],\[Xi],\[Phi]])/Sqrt[\[Phi]])//FullForm
-
-
-Solve[{x[1][1]^2+x[1][2]^2 == \[Phi]^2,
-	x[1][1] == \[Eta] \[Phi]}, {x[1][1], x[1][2]}] // FullSimplify[#, \[Phi] > 0] &
-
-
-Solve[((-0.7542488804229955`- 0.6844321255037191` I) g[\[Eta],\[Xi],\[Phi]]+(0.5615845786213401` +0.5059996357207578` I) \!\(\*SuperscriptBox[\(f\), 
-TagBox[
-RowBox[{"(", 
-RowBox[{"0", ",", "1", ",", "0"}], ")"}],
-Derivative],
-MultilineFunction->None]\)[\[Eta],\[Xi],\[Phi]]+(0.013202407892695826` -0.016405453808335926` I) \!\(\*SuperscriptBox[\(f\), 
-TagBox[
-RowBox[{"(", 
-RowBox[{"1", ",", "0", ",", "0"}], ")"}],
-Derivative],
-MultilineFunction->None]\)[\[Eta],\[Xi],\[Phi]])==0, g[\[Eta],\[Xi],\[Phi]]] // Expand
-
-
-inv1 = (
-	(z1\[CenterDot]zt1 + z2\[CenterDot]zt2)
-	\[CenterDot] powerExpr[z1\[CenterDot]z1 + z2\[CenterDot]z2, -1/2, \[Theta]p|\[Theta]m]
-	\[CenterDot] powerExpr[zt1\[CenterDot]zt1 + zt2\[CenterDot]zt2, -1/2, \[Theta]p|\[Theta]m]
-	+ kk[1] \[Theta]p[1][2] \[CenterDot] \[Theta]m[2][2] \[CenterDot] z3
-	\[CenterDot] powerExpr[z1\[CenterDot]z1 + z2\[CenterDot]z2, -1/2, \[Theta]p|\[Theta]m]
-	\[CenterDot] powerExpr[zt1\[CenterDot]zt1 + zt2\[CenterDot]zt2, -1/2, \[Theta]p|\[Theta]m]
-	+ kk[2] \[Theta]p[1][2] \[CenterDot] \[Theta]m[2][2]
-	\[CenterDot] powerExpr[z1\[CenterDot]z1 + z2\[CenterDot]z2, -1/2, \[Theta]p|\[Theta]m]
-	+ kk[3] \[Theta]p[1][2] \[CenterDot] \[Theta]m[2][2]
-	\[CenterDot] powerExpr[zt1\[CenterDot]zt1 + zt2\[CenterDot]zt2, -1/2, \[Theta]p|\[Theta]m]
-) // GExpand // CollectCD[#, Factor] &;
-
-
-\[ScriptCapitalK]d[3][1, 2][inv1] /. {\[CapitalDelta][_] -> 0, r[_] -> 0} /. randR // GExpand // CollectCD // Chop
-
-
-%/.a->-0.0319750237819319`+ 0.17593357165724927` I // CollectCD // Chop
-
-
-Solve[((-0.0008673567763213819`- 0.0018491848350067341` I)+(0.009307262479505255` -0.006621571451512355` I) a)==0, a]
-
-
-randR = Flatten @ Table[x[i][\[Mu]] -> RandomReal[], {i, 2}, {\[Mu], d}];
-
-
-(* ::Subsubsection::Closed:: *)
-(*Understand bosonic*)
-
-
-\[Eta]v = (
-	(z1\[CenterDot]zt1 + z2\[CenterDot]zt2)
-	\[CenterDot] powerExpr[z1\[CenterDot]z1 + z2\[CenterDot]z2, -1, \[Theta]p|\[Theta]m]
-) /. {\[Theta]p[_][_]|\[Theta]m[_][_] :> 0} // Expand // FullSimplify
-\[Phi]v = (
-	(zt1\[CenterDot]zt1 + zt2\[CenterDot]zt2)
-	\[CenterDot] powerExpr[z1\[CenterDot]z1 + z2\[CenterDot]z2, -1, \[Theta]p|\[Theta]m]
-) /. {\[Theta]p[_][_]|\[Theta]m[_][_] :> 0} // Expand // FullSimplify
-\[Xi]v = (
-	z3\[CenterDot]z3
-	\[CenterDot] powerExpr[z1\[CenterDot]z1 + z2\[CenterDot]z2, -1, \[Theta]p|\[Theta]m]
-) /. {\[Theta]p[_][_]|\[Theta]m[_][_] :> 0} // Expand // FullSimplify
-
-
-restore = Solve[{\[Eta]v == \[Eta], \[Phi]v == \[Phi], \[Xi]v == \[Xi], x[2][1] == 1, x[2][2] == 1, x[2][3] == 0}, {x[1][1], x[1][2], x[1][3], x[2][1], x[2][2], x[2][3]}] // First // Simplify
-
-
-randR = Flatten @ Table[x[i][\[Mu]] -> RandomReal[], {i, 2}, {\[Mu], d}];
-bosAns = (
-	+ f[\[Eta], \[Xi], \[Phi]]
-	+ \[Theta]v g[\[Eta], \[Xi], \[Phi]]
-	(*+ \[Eta]v
-	+ \[Theta]v g[\[Eta], \[Xi], \[Phi]]*)
-);
-GD[f_[\[Eta], \[Xi], \[Phi]], a_] := (
-	+ D[f[\[Eta], \[Xi], \[Phi]], \[Eta]] GD[\[Eta]v, a]
-	+ D[f[\[Eta], \[Xi], \[Phi]], \[Xi]] GD[\[Xi]v, a]
-	+ D[f[\[Eta], \[Xi], \[Phi]], \[Phi]] GD[\[Phi]v, a]
-);
-
-
-expr = (
-	\[ScriptCapitalK]d[3][1, 2][bosAns] 
-	/. {\[CapitalDelta][_]|r[_] -> 0}
-	/. (\[Theta]m|\[Theta]p)[_][_]:>0
-	(* /. (g^(0,0,1))[\[Eta],\[Xi],\[Phi]] \[Rule] 0 *)
-) // GExpand // Collect[#, f_[\[Eta], \[Xi], \[Phi]], Simplify] &
-
-
-expr /. restore // Simplify
-
-
-DSolve[(2 \[Phi] \!\(\*SuperscriptBox[\(f\), 
-TagBox[
-RowBox[{"(", 
-RowBox[{"0", ",", "0", ",", "1"}], ")"}],
-Derivative],
-MultilineFunction->None]\)[\[Eta],\[Xi],\[Phi]]+(1+\[Xi]-\[Phi]) \!\(\*SuperscriptBox[\(f\), 
-TagBox[
-RowBox[{"(", 
-RowBox[{"0", ",", "1", ",", "0"}], ")"}],
-Derivative],
-MultilineFunction->None]\)[\[Eta],\[Xi],\[Phi]]+\[Eta] \!\(\*SuperscriptBox[\(f\), 
-TagBox[
-RowBox[{"(", 
-RowBox[{"1", ",", "0", ",", "0"}], ")"}],
-Derivative],
-MultilineFunction->None]\)[\[Eta],\[Xi],\[Phi]])==0, f[\[Eta],\[Xi],\[Phi]], {\[Eta], \[Xi], \[Phi]}]
-
-
--((-1-\[Xi]v-\[Phi]v)/Sqrt[\[Phi]v]) // FullSimplify[#, x[1][1]^2+x[1][2]^2 > 0] &
-\[Eta]v/Sqrt[\[Phi]v] // FullSimplify[#, x[1][1]^2+x[1][2]^2 > 0] &
-
-
-
-
-
 (* ::Subsection:: *)
-(*Invariant intervals Boundary  \[LeftAngleBracket] \[Phi] Oh Oh \[RightAngleBracket]*)
+(*Blocks  \[LeftAngleBracket] \[Phi] Oh Oh \[RightAngleBracket] 3d boundary*)
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Bosonic blocks*)
 
 
@@ -4673,122 +3510,6 @@ diffEq /. f -> bosBlock[\[CapitalDelta], \[CapitalDelta]23, j] /. c2 -> \[Capita
 
 
 (* ::Subsubsection::Closed:: *)
-(*Some crap*)
-
-
-Clear[specK]
-
-
-dot[x_, y_] := Sum[x[\[Mu]] y[\[Mu]], {\[Mu], 3}];
-sq[x_] := dot[x, x]
-specK[a_] := x[\[Mu]_]:> (x[\[Mu]] - a[\[Mu]] sq[x]) / (1 - 2 dot[a, x] + sq[a] sq[x]);
-
-
-ansatz[\[Mu]_, \[Nu]_] := (
-	- 2 a[\[Mu]] a[\[Nu]] dot[x, x]
-	+ 4 a[\[Nu]] x[\[Mu]] dot[a, x]
-	- 2 x[\[Mu]] x[\[Nu]] dot[a, a]
-	+ 2 a[\[Nu]] x[\[Mu]]
-	- 2 a[\[Mu]] x[\[Nu]]
-	+ KroneckerDelta[\[Mu], \[Nu]] (
-		+ 2 dot[a, x]
-		+ dot[a, a] dot[x, x]
-		+ 1
-	)
-);
-
-
-Table[
-	lhs = D[x[\[Mu]] /. specK[a], x[\[Nu]]] /. specK[b] /. b[\[Rho]_] :> -a[\[Rho]] // Together // Expand;
-	rhs = ansatz[\[Mu], \[Nu]];
-	lhs - rhs
-, {\[Mu], 3}, {\[Nu], 3}] // Expand
-
-
-terms = Sum[(
-	+ (x[\[Nu]] /. specK[a] /. x -> x[1] /. a[\[Mu]_] :> x[3][\[Mu]] / sq[x[3]])
-	- (x[\[Nu]] /. specK[a] /. x -> x[2] /. a[\[Mu]_] :> x[3][\[Mu]] / sq[x[3]])
-)^2, {\[Nu], 3}] // Together // Factor
-
-
-Table[
-	Sum[ansatz[\[Mu], \[Rho]] ansatz[\[Nu], \[Rho]], {\[Rho], 3}] - KroneckerDelta[\[Mu], \[Nu]] (
-		+ 2 dot[a, x]
-		+ dot[a, a] dot[x, x]
-		+ 1
-	)^2
-, {\[Mu], 3}, {\[Nu], 3}] // Together // Factor
-
-
-ansatz[\[Mu]_, \[Nu]_] := ((
-		+ KroneckerDelta[\[Mu], \[Nu]] (1 - 2dot[a, x] + dot[a, a] dot[x, x])
-		- 2 a[\[Mu]] a[\[Nu]] dot[x, x]
-		+ 4 a[\[Mu]] x[\[Nu]] dot[a, x]
-		- 2 x[\[Mu]] x[\[Nu]] dot[a, a]
-		- 2 a[\[Mu]] x[\[Nu]]
-		+ 2 x[\[Mu]] a[\[Nu]]
-	) / (1 - 2dot[a, x] + dot[a, a] dot[x, x])^2
-);
-
-
-(tab = Table[
-	lhs = D[x[\[Mu]] /. specK[a], x[\[Nu]]] // Together;
-	rhs = ansatz[\[Mu], \[Nu]];
-	lhs - rhs
-, {\[Mu], 3}, {\[Nu], 3}]) // Together // Numerator // CoefficientList[#, {a[1], a[2], a[3], x[1], x[2], x[3]}] & // Flatten // DeleteCases[#, 0] &
-Solve[% == 0, {k1, k2, k3, k4, k5, k6, k7, k8, k9, k10, k11, k12}]
-
-
-Table[
-	term1 = Sum[
-		(ansatz[\[Mu], \[Rho]] /. x[\[Sigma]_] :> 0)
-		(ansatz[\[Nu], \[Rho]] /. a[\[Sigma]_] :> (1-e) x[\[Sigma]] / sq[x])
-	, {\[Rho], 3}] // Together // Series[#, {e, 0, -2}] & // Normal;
-	term2 = 0 (
-		+ k1 sq[x12]^2 KroneckerDelta[\[Mu], \[Nu]]
-		- k2 sq[x12] x12[\[Mu]] x12[\[Nu]]
-	) / Factor@Expand[e^2 sq[x12]^2];
-	term1 - term2 // Together // Numerator // Collect[#, {x[1][1], x[1][2], x[1][3]}] &
-, {\[Mu], 3}, {\[Nu], 3}]
-
-
-term1
-
-
-x12[\[Mu]_] := x[1][\[Mu]] - x[2][\[Mu]];
-Table[
-	term1 = Sum[
-		(ansatz[\[Mu], \[Rho]] /. x -> x[1] /. a[\[Sigma]_] :> (1-e) x[2][\[Sigma]] / sq[x[2]])
-		(ansatz[\[Nu], \[Rho]] /. x -> x[2] /. a[\[Sigma]_] :> (1-e) x[2][\[Sigma]] / sq[x[2]])
-	, {\[Rho], 3}] // Together // Series[#, {e, 0, -2}] & // Normal;
-	term2 = (
-		+ k1 sq[x12]^2 KroneckerDelta[\[Mu], \[Nu]]
-		- k2 sq[x12] x12[\[Mu]] x12[\[Nu]]
-	) / Factor@Expand[e^2 sq[x12]^2];
-	term1 - term2 // Together // Numerator // Collect[#, {x[1][1], x[1][2], x[1][3]}] &
-, {\[Mu], 3}, {\[Nu], 3}]
-
-
-term1 // Expand // Factor
-
-
-term2 // Expand // Factor
-
-
-1-2(1-e)+(1-e)^2//Simplify
-
-
-\[CapitalDelta][2]^2-2 \[CapitalDelta][2] (-1+\[CapitalDelta][3])+(-2+\[CapitalDelta][3]) \[CapitalDelta][3] // Factor // Simplify
-
-
-(* ::Subsubsection::Closed:: *)
-(*Susy invariants*)
-
-
-\[ScriptCapitalM]d[1, 2][1][\[Theta]p[1][1]\[CenterDot]\[Theta]p[1][2]]
-
-
-(* ::Subsubsection:: *)
 (*Susy blocks*)
 
 
@@ -4895,7 +3616,154 @@ neqs /. {
 } // Series[#, {\[Chi], \[Infinity], 10}] &
 
 
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
+(*Blocks  \[LeftAngleBracket] \[Phi] Oh Oh \[RightAngleBracket] 3d line*)
+
+
+(* ::Subsubsection::Closed:: *)
+(*Bosonic blocks*)
+
+
+\[ScriptCapitalC]2defect[i__][expr_] := (
+	\[ScriptCapitalD]d[i][\[ScriptCapitalD]d[i][expr]]
+	- 1/2 \[ScriptCapitalP]d[3][i][\[ScriptCapitalK]d[3][i][expr]] + \[ScriptCapitalK]d[3][i][\[ScriptCapitalP]d[3][i][expr]]
+	- \[ScriptCapitalM]d[1, 2][i][\[ScriptCapitalM]d[1, 2][i][expr]]
+)
+
+
+Clear[pref];
+SetNumeric[j, w[_]];
+\[Chi]v = (x[1][1]^2 + x[1][2]^2) / x[1][3]^2;
+restore\[Chi] = Solve[\[Chi]v == \[Chi], x[1][3]] // First;
+pref = (
+	(x[1][1] w[1] + x[1][2] w[2])^j 
+	(x[1][1]^2 + x[1][2]^2)^(-j/2) 
+	(x[1][3]^2)^(-1/2(\[CapitalDelta][1] + \[CapitalDelta][2] - \[CapitalDelta][3]))
+);
+GD[f_[\[Chi]], a_] := D[f[\[Chi]], \[Chi]] GD[\[Chi]v, a];
+diffEq = (\[ScriptCapitalC]2defect[1][pref f[\[Chi]]] - c2 pref f[\[Chi]]) / pref /. (\[Theta]p|\[Theta]m)[_][_] :> 0 // ExpandAll;
+diffEq = % /. restore\[Chi] /. \[CapitalDelta][2] -> \[CapitalDelta]23 + \[CapitalDelta][3] /. w[1] -> I w[2] // Simplify
+
+
+bosBlock[\[CapitalDelta]_, \[CapitalDelta]23_, j_][\[Chi]_] := (
+	\[Chi]^( -1/2 (\[CapitalDelta] + \[CapitalDelta]23)) 
+	Hypergeometric2F1[1/2(\[CapitalDelta] + \[CapitalDelta]23 - j), 1/2(\[CapitalDelta] + \[CapitalDelta]23 + j), \[CapitalDelta], -1/\[Chi]]
+);
+diffEq /. f -> bosBlock[\[CapitalDelta], \[CapitalDelta]23, j] /. c2 -> \[CapitalDelta](\[CapitalDelta]- 2) // Series[#, {\[Chi], Infinity, 10}] &
+
+
+(* ::Subsubsection::Closed:: *)
+(*Susy blocks*)
+
+
+inv = \[Theta]p[1][1] \[CenterDot] \[Theta]p[1][2];
+\[ScriptCapitalM]d[1, 2][1][inv] + a I \[ScriptCapitalR]d[1][inv] /. r[_] :> 0 // GExpand
+
+
+joinCD[expr_] := (
+	expr //. {a_CenterDot^b_ :> 0}
+		 //. {a_Plus?(Not@FreeQ[#,CenterDot]&) b_ :> GExpand[a\[CenterDot]b]}
+		 //. {a_CenterDot b_?(Not@FreeQ[#, \[Theta]p|\[Theta]m]&) :> a\[CenterDot]b}
+);
+
+
+comm [i___][A_, B_][expr_] := A[i][B[i][expr]] - B[i][A[i][expr]];
+acomm[i___][A_, B_][expr_] := A[i][B[i][expr]] + B[i][A[i][expr]];
+\[ScriptCapitalQ]pard[1][i___][expr_] := \[ScriptCapitalQ]pd[1][i][expr] + \[ScriptCapitalQ]md[2][i][expr];
+\[ScriptCapitalQ]pard[2][i___][expr_] := \[ScriptCapitalQ]pd[2][i][expr] + \[ScriptCapitalQ]md[1][i][expr];
+\[ScriptCapitalS]pard[1][i___][expr_] := \[ScriptCapitalS]pd[2][i][expr] + \[ScriptCapitalS]md[1][i][expr];
+\[ScriptCapitalS]pard[2][i___][expr_] := \[ScriptCapitalS]pd[1][i][expr] + \[ScriptCapitalS]md[2][i][expr];
+\[ScriptCapitalC]2defect[i__][expr_] := (
+	\[ScriptCapitalD]d[i][\[ScriptCapitalD]d[i][expr]]
+	- 1/2 Sum[acomm[i][\[ScriptCapitalP]d[a], \[ScriptCapitalK]d[a]][expr], {a, 2}]
+	- \[ScriptCapitalM]d[1, 2][i][\[ScriptCapitalM]d[1, 2][i][expr]]
+	+ 1/4 Sum[comm[i][\[ScriptCapitalS]pard[a], \[ScriptCapitalQ]pard[a]][expr], {a, 2}]
+);
+
+
+(* ::Text:: *)
+(*Check the Casimir indeed commutes (takes a bit long)*)
+
+
+(* {
+	Table[comm[1][\[ScriptCapitalC]2defect, \[ScriptCapitalP]d[a]][f], {a, 2}],
+	comm[1][\[ScriptCapitalC]2defect, \[ScriptCapitalD]d][f],
+	comm[1][\[ScriptCapitalC]2defect, \[ScriptCapitalM]d[1, 2]][f],
+	Table[comm[1][\[ScriptCapitalC]2defect, \[ScriptCapitalK]d[a]][f], {a, 2}],
+	Table[comm[1][\[ScriptCapitalC]2defect, \[ScriptCapitalQ]pard[a]][f], {a, 2}],
+	Table[comm[1][\[ScriptCapitalC]2defect, \[ScriptCapitalS]pard[a]][f], {a, 2}]
+} // GExpand // Flatten *)
+
+
+Clear[y];
+yV[i_][\[Mu]_]  := x[i][\[Mu]] - 1/2 Sum[\[CapitalSigma][\[Mu]][\[Alpha], \[Alpha]d] \[Theta]m[i][\[Alpha]]\[CenterDot]\[Theta]p[i][\[Alpha]d], {\[Alpha], 2}, {\[Alpha]d, 2}];
+restoreY = First @ Solve[{
+	yV[1][1] == y[1][1],
+	yV[1][2] == y[1][2],
+	yV[1][3] == y[1][3]
+}, {x[1][1], x[1][2], x[1][3]}];
+Join[
+	Table[\[ScriptCapitalD]pd[\[Alpha]][1][yV[1][\[Mu]]], {\[Mu], d}, {\[Alpha], 2}],
+	Table[\[ScriptCapitalD]pd[\[Alpha]][1][\[Theta]p[1][\[Alpha]d]], {\[Alpha], 2}, {\[Alpha]d, 2}]
+] // Flatten // DeleteDuplicates
+
+
+Clear[pref];
+pref = (
+	(y[1][1] + I y[1][2])^j
+	(y[1][1]^2 + y[1][2]^2)^(-j/2)
+	y[1][3]^(-(\[CapitalDelta][1]+\[CapitalDelta][2]-\[CapitalDelta][3]))
+);
+funs = f[1][\[Chi]] + inv f[2][\[Chi]];
+invV = \[Theta]p[1][1] \[CenterDot] \[Theta]p[1][2] \[CenterDot] powerExpr[yV[1][3], -1, (\[Theta]p|\[Theta]m)] // GExpand // CollectCD;
+\[Chi]v = Sum[y[1][a]^2, {a, 2}] / y[1][3]^2;
+restore\[Chi] = Solve[\[Chi]v == \[Chi], y[1][1]] // First;
+GD[y[i_][\[Mu]_], a_] := GD[yV[i][\[Mu]], a]
+GD[inv, a_] := GD[invV, a]
+GD[f_[\[Chi]], a_] := D[f[\[Chi]], \[Chi]] GD[\[Chi]v, a];
+
+
+eqs = (\[ScriptCapitalC]2defect[1][pref funs] - c2 pref funs) / pref // GExpand // CollectCD;
+
+
+eqs = x[1][3] / y[1][3] eqs /. r[1] -> \[CapitalDelta][1] // CollectCD[#, Factor] &;
+eqs = eqs /. restoreY // GExpand // joinCD // CollectCD[#, Factor] &;
+eqs = % /. \[Theta]p[1][1]\[CenterDot]\[Theta]p[1][2] -> inv y[1][3] /. restore\[Chi] // 
+	CollectCD[#, Collect[#, inv, Collect[#, f_[\[Chi]], Factor] &] &] &;
+neqs = % /. inv^2 :> 0 /. (\[Theta]p|\[Theta]m)[_][_] :> 0 // CoefficientList[#, inv] &
+sol = Solve[neqs == 0, {f[1]''[\[Chi]], f[2]''[\[Chi]]}] // First
+eqs /. sol // CollectCD[#, Together] & // (# /. inv -> invV // joinCD) & 
+
+
+(* ::Text:: *)
+(*Write for Latex*)
+
+
+neqs2 = neqs /. {\[CapitalDelta][2] -> Subscript[\[CapitalDelta], 23] + \[CapitalDelta][3], \[CapitalDelta][1] -> Subscript[\[CapitalDelta], 1], f[i_]/;i==1||i==2 :> Subscript[f, i]} // Collect[#, f_[\[Chi]], FullSimplify] &
+neqs2[[2]] + neqs2[[1]] // Collect[#, f_[\[Chi]], FullSimplify] &
+
+
+bosBlock[\[CapitalDelta]_, \[CapitalDelta]23_, j_][\[Chi]_] := (
+	\[Chi]^(-1/2(\[CapitalDelta]+\[CapitalDelta]23)) 
+	Hypergeometric2F1[1/2(\[CapitalDelta]+\[CapitalDelta]23-j), 1/2(\[CapitalDelta]+\[CapitalDelta]23+j), \[CapitalDelta], -1/\[Chi]]
+);
+neqs /. {
+	f[1] -> (
+		+ a[1] bosBlock[\[CapitalDelta],   \[CapitalDelta][2]-\[CapitalDelta][3], j][#]
+		+ a[2] bosBlock[\[CapitalDelta]+1, \[CapitalDelta][2]-\[CapitalDelta][3], j][#]
+	&),
+	f[2] -> (
+		+ a[3] bosBlock[\[CapitalDelta],   \[CapitalDelta][2]-\[CapitalDelta][3], j][#]
+		+ a[4] bosBlock[\[CapitalDelta]+1, \[CapitalDelta][2]-\[CapitalDelta][3], j][#]
+	&),
+	c2 -> \[CapitalDelta](\[CapitalDelta]-1)
+} //. {
+	a[3] -> -a[1] (\[CapitalDelta]-\[CapitalDelta][1]),
+	a[4] -> a[2] (-1+\[CapitalDelta]+\[CapitalDelta][1])
+} // Series[#, {\[Chi], \[Infinity], 10}] &
+
+
+(* ::Subsection::Closed:: *)
 (*Line, two pt fun defect blocks*)
 
 
@@ -5154,3 +4022,80 @@ MultilineFunction->None]\)[\[Eta], \[Chi]]
 );
 casEqAns = casEqAns /. {\[Eta]\[Eta] -> invs[[1]], \[Chi]\[Chi] -> invs[[2]] + 2 invs[[1]]} // GExpand // joinCD;
 casEq - casEqAns // Collect[#, f_[\[Eta], \[Chi]], CollectCD[#, Simplify] &] &
+
+
+(* ::Subsection:: *)
+(*\[LeftAngleBracket] \[Phi] Oh \[RightAngleBracket] 3d boundary*)
+
+
+(* ::Subsubsection:: *)
+(*Susy blocks*)
+
+
+joinCD[expr_] := (
+	expr //. {a_CenterDot^b_ :> 0}
+		 //. {a_Plus?(Not@FreeQ[#,CenterDot]&) b_ :> GExpand[a\[CenterDot]b]}
+		 //. {a_CenterDot b_?(Not@FreeQ[#, \[Theta]p|\[Theta]m]&) :> a\[CenterDot]b}
+);
+
+
+\[ScriptCapitalQ]pard[1][i___][expr_] := \[ScriptCapitalQ]pd[1][i][expr] + \[ScriptCapitalQ]md[2][i][expr];
+\[ScriptCapitalQ]pard[2][i___][expr_] := \[ScriptCapitalQ]pd[2][i][expr] + \[ScriptCapitalQ]md[1][i][expr];
+\[ScriptCapitalS]pard[1][i___][expr_] := \[ScriptCapitalS]pd[2][i][expr] + \[ScriptCapitalS]md[1][i][expr];
+\[ScriptCapitalS]pard[2][i___][expr_] := \[ScriptCapitalS]pd[1][i][expr] + \[ScriptCapitalS]md[2][i][expr];
+
+
+Clear[y];
+yV[i_][\[Mu]_]  := x[i][\[Mu]] - 1/2 Sum[\[CapitalSigma][\[Mu]][\[Alpha], \[Alpha]d] \[Theta]m[i][\[Alpha]]\[CenterDot]\[Theta]p[i][\[Alpha]d], {\[Alpha], 2}, {\[Alpha]d, 2}];
+restoreY = First @ Solve[{
+	yV[1][1] == y[1][1],
+	yV[1][2] == y[1][2],
+	yV[1][3] == y[1][3]
+}, {x[1][1], x[1][2], x[1][3]}];
+GD[y[i_][\[Mu]_], a_] := GD[yV[i][\[Mu]], a]
+Join[
+	Table[\[ScriptCapitalD]pd[\[Alpha]][1][yV[1][\[Mu]]], {\[Mu], d}, {\[Alpha], 2}],
+	Table[\[ScriptCapitalD]pd[\[Alpha]][1][\[Theta]p[1][\[Alpha]d]], {\[Alpha], 2}, {\[Alpha]d, 2}]
+] // Flatten // DeleteDuplicates
+
+
+Clear[pref];
+pref = (
+	(y[1][1]^2 + y[1][2]^2 + y[1][3]^2)^(-\[CapitalDelta][2])
+	y[1][3]^(-\[CapitalDelta][1]+\[CapitalDelta][2])
+) (1 + (\[CapitalDelta][1] - \[CapitalDelta][2]) \[Theta]p[1][1] \[CenterDot] \[Theta]p[1][2] / y[1][3]);
+invV = (y[1][1]^2 + y[1][2]^2 + y[1][3]^2) / y[1][3]^2;
+GD[f_[inv], a_] := D[f[inv], inv] GD[invV, a]
+
+
+{
+	\[ScriptCapitalD]d[1, 2][pref],
+	\[ScriptCapitalM]d[1, 2][1, 2][pref],
+	Table[\[ScriptCapitalK]d[a][1][pref], {a, 2}],
+	Table[\[ScriptCapitalS]pard[a][1][pref], {a, 2}]
+} /. restoreY /. r[1] -> \[CapitalDelta][1] // GExpand // joinCD // Flatten // Simplify
+
+
+eom = (
+	+ \[ScriptCapitalD]md[1][1][\[ScriptCapitalD]md[2][1][pref]] 
+	- \[ScriptCapitalD]md[2][1][\[ScriptCapitalD]md[1][1][pref]] 
+) /. {\[CapitalDelta][1] -> 1/2, \[CapitalDelta][2] -> 1/2} // GExpand // joinCD // CollectCD[#, Factor] &
+
+
+Clear[pref];
+pref = (y[1][1]^2 + y[1][2]^2 + y[1][3]^2)^(-\[CapitalDelta][1]);
+{
+	\[ScriptCapitalD]d[1, 2][pref],
+	\[ScriptCapitalM]d[1, 2][1, 2][pref],
+	\[ScriptCapitalR]d[1, 2][pref],
+	Table[\[ScriptCapitalK]d[a][1][pref], {a, 2}],
+	\[ScriptCapitalS]md[1][1][pref],
+	\[ScriptCapitalS]pd[2][1][pref]
+} /. restoreY /. r[1] -> \[CapitalDelta][1] /. r[2] :> - \[CapitalDelta][1] /. \[CapitalDelta][2] -> \[CapitalDelta][1] // 
+	GExpand // joinCD // Flatten // Simplify
+
+
+eom = (
+	+ \[ScriptCapitalD]md[1][1][\[ScriptCapitalD]md[2][1][pref]] 
+	- \[ScriptCapitalD]md[2][1][\[ScriptCapitalD]md[1][1][pref]] 
+) /. {\[CapitalDelta][1] -> \[CapitalDelta]1, \[CapitalDelta][2] -> \[CapitalDelta]2} // GExpand // joinCD // CollectCD[#, Factor] &

@@ -1202,6 +1202,7 @@ Imposing conservation of $Q_{1}^\pm$ and $P_3$ the invariant objects are
 \end{align}
 
 \subsection{Boundary \texorpdfstring{$\Nm=(1,1) \quad \langle \phi \hat O \hat O \rangle$}{} }
+
 The parallel theta coordinates are
 \begin{align}
 \theta^{1\parallel} \equiv \theta^{-1} + \theta^{+2}, \quad
@@ -1216,18 +1217,19 @@ Using $P_a$, $Q_a$, $K_a$ and $S_a$ (i.e. parallel to boundary) it is clear we c
 We need to build invariants respect to the remaining generators $M_{12}$ and $D$.
 The bosonic one is clear, and taking same conventions as Lauria, Liendo and friends we get
 \begin{align}
- \hat \chi = \frac{(x_1^a)^2}{(x_1^i)^2} \to \frac{(y_1^a)^2}{(y_1^i)^2}.
+ \chi = \frac{(x_1^a)^2}{(x_1^i)^2} \to \frac{(y_1^a)^2}{(y_1^i)^2}.
 \end{align}
 (After the arrow we supersymmetrize the invariant requiring it is chiral at point 1).
 For the nilpotent ones we can use $\theta^{\ad+}$, but $M_{12}$ invariance requires the free index is contracted, so there is only one invariant.
 All in all
 \begin{align}
- \langle \phi(x, \theta) \hat \Om(0) \hat \Om(\infty) \rangle
- = \frac{1}{|y_3|^{\Delta_\phi + \Delta_2 - \Delta_3}} \left(
-   f_1(\hat \chi)
-   + \frac{\theta^{1+}\theta^{2+}}{|y_1^i|} f_2(\hat \chi)
+ \langle \phi(x, \theta) \hat \Om^{(j)}(0, w) \hat \Om(\infty) \rangle
+ = \frac{(\hat y_a w^a)^{j}}{|y^3|^{\Delta_\phi + \Delta_2 - \Delta_3}} \left(
+   f_1(\chi)
+   + \frac{\theta^{1+}\theta^{2+}}{|y_1^i|} f_2(\chi)
  \right).
 \end{align}
+We defined $\hat y^a = y^a / |y^a|$ and $w$ is null $w^2 = 0$ to enforce tracelessness.
 To get the contributions from descendants, notice that a chiral field is expanded as
 \begin{align}
  \phi 
@@ -1241,7 +1243,81 @@ So clearly the functions $f_i(\hat \chi)$ already capture the blocks of the desc
  & f_1(\hat \chi) \sim \langle \phi \hat \Om \hat \Om \rangle, \\
  & f_2(\hat \chi) \sim \langle \rho \hat \Om \hat \Om \rangle.
 \end{align}
+The Casimir equations read:
+\begin{align}
+\begin{split}
+ & 4 \chi  (\chi +1) f_1''(\chi )
+ +\left(4 \Delta _{23} \chi +8 \chi +4\right) f_1'(\chi )
+ -f_2(\chi ) \\
+ & \hspace{15em}
+ + \left(\Delta _1+\Delta _{23} \left(\Delta _{23}+2\right) - j^2 \chi^{-1} - c_2\right) f_1(\chi )
+ = 0, \\
+ & 4 \chi  (\chi +1) f_2''(\chi ) 
+ + \left(4 \Delta _{23} \chi +8 \chi +4\right) f_2'(\chi )
+ + \left(\Delta _1 \left(\Delta _1-1\right) - c_2\right) f_1(\chi ) \\
+ & \hspace{15em}
+ + \left(\Delta _{23} \left(\Delta _{23}+2\right) -\Delta _1 + 1 - j^2 \chi^{-1} -c_2\right) f_2(\chi )
+ = 0.
+\end{split}
+\end{align}
+The solution for $c_2 = \Delta(\Delta-1)$ is
+\begin{align}
+ & f_1(\chi) = f_{\Delta}(\chi) + a f_{\Delta+1}(\chi), \\
+ & f_2(\chi) 
+   = (\Delta_\phi - \Delta) f_{\Delta}(\chi) 
+   + a (\Delta_\phi + \Delta - 1) f_{\Delta+1}(\chi).
+\end{align}
+where the bosonic blocks are
+\begin{align}
+ f_{\Delta}(\chi) 
+ = \chi^{-1/2(\Delta + \Delta_{23})} {}_2F_1 \left( 
+    \frac{1}{2}(\Delta + \Delta_{23} - j),
+    \frac{1}{2}(\Delta + \Delta_{23} + j);
+    \Delta;
+    -\frac{1}{\chi}
+   \right).
+\end{align}
 
+\subsection{Line \texorpdfstring{$3d \; \langle \phi \hat O \hat O \rangle$}{} }
+
+The parallel and perpendicular coordinates are
+\begin{align}
+ \text{orthogonal}: \quad \theta^{1+}, \; \theta^{2-}, \\
+ \text{parallel}:   \quad \theta^{2+}, \; \theta^{1-}.
+\end{align}
+The frame is the same as before, but now $\theta^{1+} \theta^{2+}$ is not invariant under $M_{12} + i R$, so there is no nilpotent invariant in $\langle \phi \hat \Om \hat \Om \rangle$.
+
+
+\subsection{Boundary \texorpdfstring{$3d \; \langle \phi \hat O \rangle$}{} }
+
+\subsubsection{\texorpdfstring{$\Nm = (1,1)$}{}}
+
+The correlator is
+\begin{align}
+ \langle \phi(y, \theta^+) \hat O(0) \rangle
+ = \frac{1}{|y|^{2 \hat \Delta} (y^3)^{\Delta-\hat \Delta}} \left(
+  1 + \Delta_{12} \frac{\theta^{1+} \theta^{2+}}{y^3}
+ \right).
+\end{align}
+The equations of motion 
+\begin{align}
+ \epsilon^{\ad\bd} D^{-}_\ad D^{-}_\bd \langle \phi(y, \theta^+) \hat O(0) \rangle = 0
+\end{align}
+are only solved for $\hat \Delta = \Delta = 1/2$.
+
+\subsubsection{\texorpdfstring{$\Nm = (2,0)$}{}}
+
+The correlator is
+\begin{align}
+ \langle \phi(y, \theta^+) \hat O(0) \rangle
+ = \frac{\delta_{\Delta,\hat\Delta}}{|y|^{2 \Delta}}.
+\end{align}
+The equations of motion are only solved for $\hat \Delta = \Delta = 1/2$.
+This looks off, I would expect that $\hat \Delta = 1$ and $\Delta = 1/2$ should be a solution, corresponding to $\Phi|_{\partial} = 0$ and $\Psi|_{\partial} \ne 0$ in the notation of Gaiotto, and $\partial_{\bot} \phi$ is a level-one descendant:
+\begin{align}
+ \Psi = \psi + \theta \partial_{\bot} \phi + \ldots
+\end{align}
+Perhaps the problem is that we are assuming that $\Psi$ is bosonic, but assuming it's fermionic we could find another structure in the two-point function?
 
 
 \appendix
