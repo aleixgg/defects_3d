@@ -1003,6 +1003,8 @@ allCombinations = DeleteDuplicates[Sort /@ allCombinations];
 
 
 
+
+
 (* ::Text:: *)
 (*Map to commutation relations*)
 
@@ -3164,7 +3166,7 @@ derivs = Flatten[{
 evalCoeff = {
 	\[CapitalDelta] -> \[CapitalDelta][i],
 	\[ScriptCapitalR] -> r[i],
-	HoldPattern[\[ScriptCapitalM][_, _]] -> 0,
+	(* HoldPattern[\[ScriptCapitalM][a_, b_]] \[RuleDelayed] m[a, b], *)
 	\[ScriptX] -> x[i],
 	\[Theta]m[\[Alpha]_] :> \[Theta]m[i][\[Alpha]], 
 	\[Theta]p[\[Alpha]d_] :> \[Theta]p[i][\[Alpha]d]
@@ -3241,8 +3243,12 @@ rhs = (prepareOp[getDiffOp[\[ScriptCapitalK][1]]]
 lhs - rhs
 
 
-(* ::Subsection::Closed:: *)
+(* ::Subsection:: *)
 (*Collect differential operators 3d*)
+
+
+(* ::Subsubsection::Closed:: *)
+(*Generic*)
 
 
 SetNumeric[\[CapitalDelta][_]];
@@ -3257,6 +3263,22 @@ GD[\[Theta]m[_][_],    \[Theta]p[_][_]]   := 0;
 GD[\[Theta]p[i_][\[Alpha]d_], \[Theta]p[j_][\[Beta]d_]]:= \[Delta][i, j] \[Delta][\[Alpha]d, \[Beta]d];
 GD[\[Theta]p[_][_],    x[_][_]]    := 0;
 GD[\[Theta]p[_][_],    \[Theta]m[_][_]]   := 0;
+
+
+twoPointOp[name_] := (
+	name[i__][expr_] := Total[name[#][expr] & /@ {i}]
+);
+allDiffOps = Flatten @ {
+	Table[{\[ScriptCapitalP]d[\[Mu]], \[ScriptCapitalK]d[\[Mu]]}, {\[Mu], d}],
+	Table[\[ScriptCapitalM]d[\[Mu], \[Nu]], {\[Mu], d}, {\[Nu], d}],
+	{\[ScriptCapitalD]d, \[ScriptCapitalR]d},
+	Table[{\[ScriptCapitalQ]md[a], \[ScriptCapitalQ]pd[a], \[ScriptCapitalS]md[a], \[ScriptCapitalS]pd[a]}, {a, 2}]
+};
+twoPointOp /@ allDiffOps;
+
+
+(* ::Subsubsection::Closed:: *)
+(*Without \[ScriptCapitalM]*)
 
 
 \[ScriptCapitalP]d[1][i_][expr_] := GD[expr,x[i][1]];
@@ -3286,16 +3308,35 @@ GD[\[Theta]p[_][_],    \[Theta]m[_][_]]   := 0;
 \[ScriptCapitalD]pd[2][i_][expr_] := (GD[expr,\[Theta]m[i][2]]-(-(1/2) \[Theta]p[i][1])\[CenterDot]GD[expr,x[i][1]]-(-(1/2) I \[Theta]p[i][1])\[CenterDot]GD[expr,x[i][2]]-(1/2 \[Theta]p[i][2])\[CenterDot]GD[expr,x[i][3]]);
 
 
-twoPointOp[name_] := (
-	name[i__][expr_] := Total[name[#][expr] & /@ {i}]
-);
-allDiffOps = Flatten @ {
-	Table[{\[ScriptCapitalP]d[\[Mu]], \[ScriptCapitalK]d[\[Mu]]}, {\[Mu], d}],
-	Table[\[ScriptCapitalM]d[\[Mu], \[Nu]], {\[Mu], d}, {\[Nu], d}],
-	{\[ScriptCapitalD]d, \[ScriptCapitalR]d},
-	Table[{\[ScriptCapitalQ]md[a], \[ScriptCapitalQ]pd[a], \[ScriptCapitalS]md[a], \[ScriptCapitalS]pd[a]}, {a, 2}]
-};
-twoPointOp /@ allDiffOps;
+(* ::Subsubsection::Closed:: *)
+(*With \[ScriptCapitalM] (whaat?)*)
+
+
+\[ScriptCapitalP]d[1][i_][expr_] := GD[expr,x[i][1]];
+\[ScriptCapitalP]d[2][i_][expr_] := GD[expr,x[i][2]];
+\[ScriptCapitalP]d[3][i_][expr_] := GD[expr,x[i][3]];
+\[ScriptCapitalK]d[1][i_][expr_] := ((-(\[Theta]m[i][1]\[CenterDot]\[Theta]p[i][2]) r[i]-\[Theta]m[i][2]\[CenterDot]\[Theta]p[i][1] r[i]+2 \[CapitalDelta][i] x[i][1])\[CenterDot]expr+(2 x[i][1] x[i][2])\[CenterDot]GD[expr,x[i][2]]+(2 x[i][1] x[i][3])\[CenterDot]GD[expr,x[i][3]]+(-(1/2) \[Theta]m[i][1]\[CenterDot]\[Theta]m[i][2]\[CenterDot]\[Theta]p[i][1]\[CenterDot]\[Theta]p[i][2]+x[i][1]^2-x[i][2]^2-x[i][3]^2)\[CenterDot]GD[expr,x[i][1]]+(1/2 \[Theta]m[i][1]\[CenterDot]\[Theta]m[i][2]\[CenterDot]\[Theta]p[i][2]-x[i][3] \[Theta]m[i][1]+x[i][1] \[Theta]m[i][2]-I x[i][2] \[Theta]m[i][2])\[CenterDot]GD[expr,\[Theta]m[i][2]]+(-(1/2) \[Theta]m[i][1]\[CenterDot]\[Theta]m[i][2]\[CenterDot]\[Theta]p[i][1]+x[i][1] \[Theta]m[i][1]+I x[i][2] \[Theta]m[i][1]+x[i][3] \[Theta]m[i][2])\[CenterDot]GD[expr,\[Theta]m[i][1]]+(1/2 \[Theta]m[i][2]\[CenterDot]\[Theta]p[i][1]\[CenterDot]\[Theta]p[i][2]-x[i][3] \[Theta]p[i][1]+x[i][1] \[Theta]p[i][2]+I x[i][2] \[Theta]p[i][2])\[CenterDot]GD[expr,\[Theta]p[i][2]]+(-(1/2) \[Theta]m[i][1]\[CenterDot]\[Theta]p[i][1]\[CenterDot]\[Theta]p[i][2]+x[i][1] \[Theta]p[i][1]-I x[i][2] \[Theta]p[i][1]+x[i][3] \[Theta]p[i][2])\[CenterDot]GD[expr,\[Theta]p[i][1]]);
+\[ScriptCapitalK]d[2][i_][expr_] := ((2 x[i][1] x[i][2])\[CenterDot]GD[expr,x[i][1]]+(I \[Theta]m[i][1]\[CenterDot]\[Theta]p[i][2] r[i]-I \[Theta]m[i][2]\[CenterDot]\[Theta]p[i][1] r[i]+2 \[CapitalDelta][i] x[i][2])\[CenterDot]expr+(2 x[i][2] x[i][3])\[CenterDot]GD[expr,x[i][3]]+(-(1/2) \[Theta]m[i][1]\[CenterDot]\[Theta]m[i][2]\[CenterDot]\[Theta]p[i][1]\[CenterDot]\[Theta]p[i][2]-x[i][1]^2+x[i][2]^2-x[i][3]^2)\[CenterDot]GD[expr,x[i][2]]+(-(1/2) I \[Theta]m[i][1]\[CenterDot]\[Theta]m[i][2]\[CenterDot]\[Theta]p[i][2]+I x[i][3] \[Theta]m[i][1]+I x[i][1] \[Theta]m[i][2]+x[i][2] \[Theta]m[i][2])\[CenterDot]GD[expr,\[Theta]m[i][2]]+(-(1/2) I \[Theta]m[i][1]\[CenterDot]\[Theta]m[i][2]\[CenterDot]\[Theta]p[i][1]-I x[i][1] \[Theta]m[i][1]+x[i][2] \[Theta]m[i][1]+I x[i][3] \[Theta]m[i][2])\[CenterDot]GD[expr,\[Theta]m[i][1]]+(1/2 I \[Theta]m[i][2]\[CenterDot]\[Theta]p[i][1]\[CenterDot]\[Theta]p[i][2]-I x[i][3] \[Theta]p[i][1]-I x[i][1] \[Theta]p[i][2]+x[i][2] \[Theta]p[i][2])\[CenterDot]GD[expr,\[Theta]p[i][2]]+(1/2 I \[Theta]m[i][1]\[CenterDot]\[Theta]p[i][1]\[CenterDot]\[Theta]p[i][2]+I x[i][1] \[Theta]p[i][1]+x[i][2] \[Theta]p[i][1]-I x[i][3] \[Theta]p[i][2])\[CenterDot]GD[expr,\[Theta]p[i][1]]);
+\[ScriptCapitalK]d[3][i_][expr_] := ((2 x[i][1] x[i][3])\[CenterDot]GD[expr,x[i][1]]+(2 x[i][2] x[i][3])\[CenterDot]GD[expr,x[i][2]]+(-(\[Theta]m[i][1]\[CenterDot]\[Theta]p[i][1]) r[i]+\[Theta]m[i][2]\[CenterDot]\[Theta]p[i][2] r[i]+2 \[CapitalDelta][i] x[i][3])\[CenterDot]expr+(-(1/2) \[Theta]m[i][1]\[CenterDot]\[Theta]m[i][2]\[CenterDot]\[Theta]p[i][1]\[CenterDot]\[Theta]p[i][2]-x[i][1]^2-x[i][2]^2+x[i][3]^2)\[CenterDot]GD[expr,x[i][3]]+(1/2 \[Theta]m[i][1]\[CenterDot]\[Theta]m[i][2]\[CenterDot]\[Theta]p[i][2]+x[i][3] \[Theta]m[i][1]-x[i][1] \[Theta]m[i][2]-I x[i][2] \[Theta]m[i][2])\[CenterDot]GD[expr,\[Theta]m[i][1]]+(1/2 \[Theta]m[i][1]\[CenterDot]\[Theta]m[i][2]\[CenterDot]\[Theta]p[i][1]+x[i][1] \[Theta]m[i][1]-I x[i][2] \[Theta]m[i][1]+x[i][3] \[Theta]m[i][2])\[CenterDot]GD[expr,\[Theta]m[i][2]]+(1/2 \[Theta]m[i][2]\[CenterDot]\[Theta]p[i][1]\[CenterDot]\[Theta]p[i][2]+x[i][3] \[Theta]p[i][1]-x[i][1] \[Theta]p[i][2]+I x[i][2] \[Theta]p[i][2])\[CenterDot]GD[expr,\[Theta]p[i][1]]+(1/2 \[Theta]m[i][1]\[CenterDot]\[Theta]p[i][1]\[CenterDot]\[Theta]p[i][2]+x[i][1] \[Theta]p[i][1]+I x[i][2] \[Theta]p[i][1]+x[i][3] \[Theta]p[i][2])\[CenterDot]GD[expr,\[Theta]p[i][2]]);
+\[ScriptCapitalD]d[i_][expr_] := (\[CapitalDelta][i]\[CenterDot]expr+x[i][1]\[CenterDot]GD[expr,x[i][1]]+x[i][2]\[CenterDot]GD[expr,x[i][2]]+x[i][3]\[CenterDot]GD[expr,x[i][3]]+(1/2 \[Theta]m[i][1])\[CenterDot]GD[expr,\[Theta]m[i][1]]+(1/2 \[Theta]m[i][2])\[CenterDot]GD[expr,\[Theta]m[i][2]]+(1/2 \[Theta]p[i][1])\[CenterDot]GD[expr,\[Theta]p[i][1]]+(1/2 \[Theta]p[i][2])\[CenterDot]GD[expr,\[Theta]p[i][2]]);
+\[ScriptCapitalR]d[i_][expr_] := (r[i]\[CenterDot]expr+\[Theta]m[i][1]\[CenterDot]GD[expr,\[Theta]m[i][1]]+\[Theta]m[i][2]\[CenterDot]GD[expr,\[Theta]m[i][2]]+-\[Theta]p[i][1]\[CenterDot]GD[expr,\[Theta]p[i][1]]+-\[Theta]p[i][2]\[CenterDot]GD[expr,\[Theta]p[i][2]]);
+\[ScriptCapitalM]d[\[Mu]_, \[Nu]_][i_][expr_] /; \[Mu]>\[Nu] := -\[ScriptCapitalM]d[\[Nu], \[Mu]][i][expr];
+\[ScriptCapitalM]d[\[Mu]_, \[Mu]_][i_][expr_] := 0;
+\[ScriptCapitalM]d[1, 2][i_][expr_] := (-x[i][1]\[CenterDot]GD[expr,x[i][2]]+x[i][2]\[CenterDot]GD[expr,x[i][1]]+(-(1/2) I \[Theta]m[i][1])\[CenterDot]GD[expr,\[Theta]m[i][1]]+(1/2 I \[Theta]m[i][2])\[CenterDot]GD[expr,\[Theta]m[i][2]]+(1/2 I \[Theta]p[i][1])\[CenterDot]GD[expr,\[Theta]p[i][1]]+(-(1/2) I \[Theta]p[i][2])\[CenterDot]GD[expr,\[Theta]p[i][2]]);
+\[ScriptCapitalM]d[1, 3][i_][expr_] := (-x[i][1]\[CenterDot]GD[expr,x[i][3]]+x[i][3]\[CenterDot]GD[expr,x[i][1]]+(1/2 \[Theta]m[i][1])\[CenterDot]GD[expr,\[Theta]m[i][2]]+(-(1/2) \[Theta]m[i][2])\[CenterDot]GD[expr,\[Theta]m[i][1]]+(1/2 \[Theta]p[i][1])\[CenterDot]GD[expr,\[Theta]p[i][2]]+(-(1/2) \[Theta]p[i][2])\[CenterDot]GD[expr,\[Theta]p[i][1]]);
+\[ScriptCapitalM]d[2, 3][i_][expr_] := (-x[i][2]\[CenterDot]GD[expr,x[i][3]]+x[i][3]\[CenterDot]GD[expr,x[i][2]]+(-(1/2) I \[Theta]m[i][1])\[CenterDot]GD[expr,\[Theta]m[i][2]]+(-(1/2) I \[Theta]m[i][2])\[CenterDot]GD[expr,\[Theta]m[i][1]]+(1/2 I \[Theta]p[i][1])\[CenterDot]GD[expr,\[Theta]p[i][2]]+(1/2 I \[Theta]p[i][2])\[CenterDot]GD[expr,\[Theta]p[i][1]]);
+\[ScriptCapitalQ]md[1][i_][expr_] := (GD[expr,\[Theta]p[i][1]]+(-(1/2) \[Theta]m[i][1])\[CenterDot]GD[expr,x[i][3]]+(-(1/2) \[Theta]m[i][2])\[CenterDot]GD[expr,x[i][1]]+(-(1/2) I \[Theta]m[i][2])\[CenterDot]GD[expr,x[i][2]]);
+\[ScriptCapitalQ]md[2][i_][expr_] := (GD[expr,\[Theta]p[i][2]]+(-(1/2) \[Theta]m[i][1])\[CenterDot]GD[expr,x[i][1]]+(1/2 I \[Theta]m[i][1])\[CenterDot]GD[expr,x[i][2]]+(1/2 \[Theta]m[i][2])\[CenterDot]GD[expr,x[i][3]]);
+\[ScriptCapitalQ]pd[1][i_][expr_] := (GD[expr,\[Theta]m[i][1]]+(-(1/2) \[Theta]p[i][1])\[CenterDot]GD[expr,x[i][3]]+(-(1/2) \[Theta]p[i][2])\[CenterDot]GD[expr,x[i][1]]+(1/2 I \[Theta]p[i][2])\[CenterDot]GD[expr,x[i][2]]);
+\[ScriptCapitalQ]pd[2][i_][expr_] := (GD[expr,\[Theta]m[i][2]]+(-(1/2) \[Theta]p[i][1])\[CenterDot]GD[expr,x[i][1]]+(-(1/2) I \[Theta]p[i][1])\[CenterDot]GD[expr,x[i][2]]+(1/2 \[Theta]p[i][2])\[CenterDot]GD[expr,x[i][3]]);
+\[ScriptCapitalS]md[1][i_][expr_] := ((\[Theta]m[i][1]\[CenterDot]\[Theta]m[i][2])\[CenterDot]GD[expr,\[Theta]m[i][2]]+(-(\[Theta]m[i][1]\[CenterDot]\[Theta]p[i][2])+x[i][1]+I x[i][2])\[CenterDot]GD[expr,\[Theta]p[i][2]]+(-(1/2) \[Theta]m[i][1]\[CenterDot]\[Theta]p[i][1]+1/2 \[Theta]m[i][2]\[CenterDot]\[Theta]p[i][2]+x[i][3])\[CenterDot]GD[expr,\[Theta]p[i][1]]+(r[i] \[Theta]m[i][1]-\[CapitalDelta][i] \[Theta]m[i][1])\[CenterDot]expr+(-(1/4) \[Theta]m[i][1]\[CenterDot]\[Theta]m[i][2]\[CenterDot]\[Theta]p[i][2]-1/2 x[i][3] \[Theta]m[i][1]+1/2 x[i][1] \[Theta]m[i][2]+1/2 I x[i][2] \[Theta]m[i][2])\[CenterDot]GD[expr,x[i][3]]+(1/4 \[Theta]m[i][1]\[CenterDot]\[Theta]m[i][2]\[CenterDot]\[Theta]p[i][1]-1/2 x[i][1] \[Theta]m[i][1]-1/2 I x[i][2] \[Theta]m[i][1]-1/2 x[i][3] \[Theta]m[i][2])\[CenterDot]GD[expr,x[i][1]]+(1/4 I \[Theta]m[i][1]\[CenterDot]\[Theta]m[i][2]\[CenterDot]\[Theta]p[i][1]+1/2 I x[i][1] \[Theta]m[i][1]-1/2 x[i][2] \[Theta]m[i][1]-1/2 I x[i][3] \[Theta]m[i][2])\[CenterDot]GD[expr,x[i][2]]);
+\[ScriptCapitalS]md[2][i_][expr_] := (-(\[Theta]m[i][1]\[CenterDot]\[Theta]m[i][2])\[CenterDot]GD[expr,\[Theta]m[i][1]]+(-(\[Theta]m[i][2]\[CenterDot]\[Theta]p[i][1])+x[i][1]-I x[i][2])\[CenterDot]GD[expr,\[Theta]p[i][1]]+(1/2 \[Theta]m[i][1]\[CenterDot]\[Theta]p[i][1]-1/2 \[Theta]m[i][2]\[CenterDot]\[Theta]p[i][2]-x[i][3])\[CenterDot]GD[expr,\[Theta]p[i][2]]+(r[i] \[Theta]m[i][2]-\[CapitalDelta][i] \[Theta]m[i][2])\[CenterDot]expr+(1/4 I \[Theta]m[i][1]\[CenterDot]\[Theta]m[i][2]\[CenterDot]\[Theta]p[i][2]-1/2 I x[i][3] \[Theta]m[i][1]-1/2 I x[i][1] \[Theta]m[i][2]-1/2 x[i][2] \[Theta]m[i][2])\[CenterDot]GD[expr,x[i][2]]+(-(1/4) \[Theta]m[i][1]\[CenterDot]\[Theta]m[i][2]\[CenterDot]\[Theta]p[i][2]+1/2 x[i][3] \[Theta]m[i][1]-1/2 x[i][1] \[Theta]m[i][2]+1/2 I x[i][2] \[Theta]m[i][2])\[CenterDot]GD[expr,x[i][1]]+(-(1/4) \[Theta]m[i][1]\[CenterDot]\[Theta]m[i][2]\[CenterDot]\[Theta]p[i][1]-1/2 x[i][1] \[Theta]m[i][1]+1/2 I x[i][2] \[Theta]m[i][1]-1/2 x[i][3] \[Theta]m[i][2])\[CenterDot]GD[expr,x[i][3]]);
+\[ScriptCapitalS]pd[1][i_][expr_] := ((\[Theta]p[i][1]\[CenterDot]\[Theta]p[i][2])\[CenterDot]GD[expr,\[Theta]p[i][2]]+(\[Theta]m[i][2]\[CenterDot]\[Theta]p[i][1]+x[i][1]-I x[i][2])\[CenterDot]GD[expr,\[Theta]m[i][2]]+(1/2 \[Theta]m[i][1]\[CenterDot]\[Theta]p[i][1]-1/2 \[Theta]m[i][2]\[CenterDot]\[Theta]p[i][2]+x[i][3])\[CenterDot]GD[expr,\[Theta]m[i][1]]+(-r[i] \[Theta]p[i][1]-\[CapitalDelta][i] \[Theta]p[i][1])\[CenterDot]expr+(-(1/4) \[Theta]m[i][2]\[CenterDot]\[Theta]p[i][1]\[CenterDot]\[Theta]p[i][2]-1/2 x[i][3] \[Theta]p[i][1]+1/2 x[i][1] \[Theta]p[i][2]-1/2 I x[i][2] \[Theta]p[i][2])\[CenterDot]GD[expr,x[i][3]]+(1/4 \[Theta]m[i][1]\[CenterDot]\[Theta]p[i][1]\[CenterDot]\[Theta]p[i][2]-1/2 x[i][1] \[Theta]p[i][1]+1/2 I x[i][2] \[Theta]p[i][1]-1/2 x[i][3] \[Theta]p[i][2])\[CenterDot]GD[expr,x[i][1]]+(-(1/4) I \[Theta]m[i][1]\[CenterDot]\[Theta]p[i][1]\[CenterDot]\[Theta]p[i][2]-1/2 I x[i][1] \[Theta]p[i][1]-1/2 x[i][2] \[Theta]p[i][1]+1/2 I x[i][3] \[Theta]p[i][2])\[CenterDot]GD[expr,x[i][2]]);
+\[ScriptCapitalS]pd[2][i_][expr_] := (-(\[Theta]p[i][1]\[CenterDot]\[Theta]p[i][2])\[CenterDot]GD[expr,\[Theta]p[i][1]]+(\[Theta]m[i][1]\[CenterDot]\[Theta]p[i][2]+x[i][1]+I x[i][2])\[CenterDot]GD[expr,\[Theta]m[i][1]]+(-(1/2) \[Theta]m[i][1]\[CenterDot]\[Theta]p[i][1]+1/2 \[Theta]m[i][2]\[CenterDot]\[Theta]p[i][2]-x[i][3])\[CenterDot]GD[expr,\[Theta]m[i][2]]+(-r[i] \[Theta]p[i][2]-\[CapitalDelta][i] \[Theta]p[i][2])\[CenterDot]expr+(-(1/4) I \[Theta]m[i][2]\[CenterDot]\[Theta]p[i][1]\[CenterDot]\[Theta]p[i][2]+1/2 I x[i][3] \[Theta]p[i][1]+1/2 I x[i][1] \[Theta]p[i][2]-1/2 x[i][2] \[Theta]p[i][2])\[CenterDot]GD[expr,x[i][2]]+(-(1/4) \[Theta]m[i][2]\[CenterDot]\[Theta]p[i][1]\[CenterDot]\[Theta]p[i][2]+1/2 x[i][3] \[Theta]p[i][1]-1/2 x[i][1] \[Theta]p[i][2]-1/2 I x[i][2] \[Theta]p[i][2])\[CenterDot]GD[expr,x[i][1]]+(-(1/4) \[Theta]m[i][1]\[CenterDot]\[Theta]p[i][1]\[CenterDot]\[Theta]p[i][2]-1/2 x[i][1] \[Theta]p[i][1]-1/2 I x[i][2] \[Theta]p[i][1]-1/2 x[i][3] \[Theta]p[i][2])\[CenterDot]GD[expr,x[i][3]]);
+\[ScriptCapitalD]md[1][i_][expr_] := (GD[expr,\[Theta]p[i][1]]-(-(1/2) \[Theta]m[i][1])\[CenterDot]GD[expr,x[i][3]]-(-(1/2) \[Theta]m[i][2])\[CenterDot]GD[expr,x[i][1]]-(-(1/2) I \[Theta]m[i][2])\[CenterDot]GD[expr,x[i][2]]);
+\[ScriptCapitalD]md[2][i_][expr_] := (GD[expr,\[Theta]p[i][2]]-(-(1/2) \[Theta]m[i][1])\[CenterDot]GD[expr,x[i][1]]-(1/2 I \[Theta]m[i][1])\[CenterDot]GD[expr,x[i][2]]-(1/2 \[Theta]m[i][2])\[CenterDot]GD[expr,x[i][3]]);
+\[ScriptCapitalD]pd[1][i_][expr_] := (GD[expr,\[Theta]m[i][1]]-(-(1/2) \[Theta]p[i][1])\[CenterDot]GD[expr,x[i][3]]-(-(1/2) \[Theta]p[i][2])\[CenterDot]GD[expr,x[i][1]]-(1/2 I \[Theta]p[i][2])\[CenterDot]GD[expr,x[i][2]]);
+\[ScriptCapitalD]pd[2][i_][expr_] := (GD[expr,\[Theta]m[i][2]]-(-(1/2) \[Theta]p[i][1])\[CenterDot]GD[expr,x[i][1]]-(-(1/2) I \[Theta]p[i][1])\[CenterDot]GD[expr,x[i][2]]-(1/2 \[Theta]p[i][2])\[CenterDot]GD[expr,x[i][3]]);
 
 
 (* ::Subsection::Closed:: *)
@@ -4080,6 +4121,35 @@ eom = (
 	+ \[ScriptCapitalD]md[1][1][\[ScriptCapitalD]md[2][1][pref]] 
 	- \[ScriptCapitalD]md[2][1][\[ScriptCapitalD]md[1][1][pref]] 
 ) /. {\[CapitalDelta][1] -> 1/2, \[CapitalDelta][2] -> 1/2} // GExpand // joinCD // CollectCD[#, Factor] &
+
+
+Solve[(-1+4 b-2 \[CapitalDelta][1]-2 \[CapitalDelta][2])==0,b]
+
+
+SetNumeric[a, b, c];
+Clear[pref];
+ratioV = (y[1][1]^2 + y[1][2]^2) / y[1][3]^2;
+restoreRatio = Solve[ratioV == ratio, y[1][3]] // First;
+GD[f_[ratio], a_] := D[f[ratio], ratio] GD[ratioV, a]
+pref = (
+	(y[1][1]^2 + y[1][2]^2 + y[1][3]^2)^(-b)
+	( \[Theta]p[1][1] f[ratio] + \[Theta]p[1][2] g[ratio])
+);
+{
+	\[ScriptCapitalD]d[1, 2][pref],
+	Table[\[ScriptCapitalD]pd[a][1][pref], {a, 2}],
+	(* \[ScriptCapitalM]d[1, 2][1, 2][pref], *)
+	\[ScriptCapitalR]d[1, 2][pref],
+	Table[\[ScriptCapitalK]d[a][1][pref], {a, 2}],
+	\[ScriptCapitalS]md[1][1][pref],
+	\[ScriptCapitalS]pd[2][1][pref]
+} /. restoreY /. restoreRatio /. r[1] -> \[CapitalDelta][1] //. {
+b->1/4 (1+2 \[CapitalDelta][1]+2 \[CapitalDelta][2]),
+r[2]->1-\[CapitalDelta][1]
+} // GExpand // joinCD // Flatten // Simplify // Collect[#, (\[Theta]p|\[Theta]m)[_][_], Simplify] &
+
+
+DSolve[(f[ratio] (\[CapitalDelta][1]-\[CapitalDelta][2])-2 (1+ratio) Derivative[1][f][ratio])==0,f,ratio]
 
 
 Clear[pref];
