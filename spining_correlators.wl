@@ -231,7 +231,7 @@ rhs = (\[ScriptCapitalK]d[3][2][OO[i]] /. OO[j_] :> twoPtFun[\[Mu], j]) pref // 
 lhs + rhs /. x[2][1|2] :> 0 // Together
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Check < \[Phi] Oi >*)
 
 
@@ -256,7 +256,7 @@ i = 1;
 % /. x[2][1|2] -> 0 // ExpandAll // Together
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Check < \[Phi] Oi > with U(1)*)
 
 
@@ -282,3 +282,135 @@ i = 1;
 i = 1;
 (\[ScriptCapitalK]d[3][1][\[Phi]] + \[ScriptCapitalK]d[3][2][OO[i]] /. {\[Phi] -> twoPtFun[i], OO[j_] :> twoPtFun[j]}) / twoPtFun[i];
 % /. x[2][1|2] -> 0 // ExpandAll // Together
+
+
+(* ::Subsection:: *)
+(*Spinning ops*)
+
+
+(* ::Subsubsection:: *)
+(*Define diff operators*)
+
+
+\[Delta] = KroneckerDelta;
+\[CapitalOmega][1, 2] := 1; \[CapitalOmega][2, 1] := -1; \[CapitalOmega][1, 1] = \[CapitalOmega][2, 2] = 0;
+\[Eta][0, 0] = -1; \[Eta][1, 1] = +1; \[Eta][2, 2] = +1;
+\[Eta][\[Mu]_Integer, \[Nu]_Integer] /; \[Mu] != \[Nu] := 0;
+\[Gamma][0][\[Alpha]_, \[Beta]_] := I PauliMatrix[2][[\[Alpha], \[Beta]]]
+\[Gamma][1][\[Alpha]_, \[Beta]_] :=   PauliMatrix[1][[\[Alpha], \[Beta]]]
+\[Gamma][2][\[Alpha]_, \[Beta]_] :=   PauliMatrix[3][[\[Alpha], \[Beta]]]
+MM[\[Mu]_, \[Nu]_][\[Alpha]_, \[Beta]_] := - I / 4 Sum[
+	+ \[Gamma][\[Mu]][\[Alpha], \[Sigma]] \[Gamma][\[Nu]][\[Sigma], \[Beta]]
+	- \[Gamma][\[Nu]][\[Alpha], \[Sigma]] \[Gamma][\[Mu]][\[Sigma], \[Beta]]
+, {\[Sigma], 2}];
+Table[
+	Sum[\[Gamma][\[Mu]][\[Alpha], \[Sigma]] \[Gamma][\[Nu]][\[Sigma], \[Beta]] + \[Gamma][\[Nu]][\[Alpha], \[Sigma]] \[Gamma][\[Mu]][\[Sigma], \[Beta]], {\[Sigma], 2}] - 2 \[Eta][\[Mu], \[Nu]] \[Delta][\[Alpha], \[Beta]]
+, {\[Alpha], 2}, {\[Beta], 2}, {\[Mu], 0, 2}, {\[Nu], 0, 2}] // Flatten // DeleteDuplicates
+
+
+SetNumeric[\[CapitalDelta][_]];
+(* We take x to have indices up, we follow conventions of Iliesiu and friends *)
+der[x[i_][\[Mu]_], x[j_][\[Nu]_]] := \[Delta][i, j] \[Delta][\[Mu], \[Nu]]
+\[ScriptCapitalD]d[i_][\[Psi][\[Alpha]_]] := -I ( 
+	+ Sum[x[i][\[Mu]] der[\[Psi][\[Alpha]], x[i][\[Mu]]], {\[Mu], 0, 2}]
+	+ \[CapitalDelta][i] \[Psi][\[Alpha]]
+);
+\[ScriptCapitalP]d[\[Mu]_][i_][\[Psi][\[Alpha]_]] := I \[Eta][\[Mu], \[Mu]] der[\[Psi][\[Alpha]], x[i][\[Mu]]];
+\[ScriptCapitalK]d[\[Mu]_][i_][\[Psi][\[Alpha]_]] := -I (
+	+ 2 x[i][\[Mu]] Sum[x[i][\[Nu]] der[\[Psi][\[Alpha]], x[i][\[Nu]]], {\[Nu], 0, 2}] 
+	- Sum[\[Eta][\[Nu], \[Nu]] x[i][\[Nu]]^2, {\[Nu], 0, 2}] \[Eta][\[Mu], \[Mu]] der[\[Psi][\[Alpha]], x[i][\[Mu]]] 
+	+ 2 x[i][\[Mu]] \[CapitalDelta][i] \[Psi][\[Alpha]]
+	(* Is there a typo here in Iliesiu and friends? *)
+	- 2 I Sum[\[Eta][\[Nu], \[Nu]] x[i][\[Nu]] MM[\[Nu], \[Mu]][\[Alpha], \[Beta]] \[Psi][\[Beta]], {\[Nu], 0, 2}, {\[Beta], 2}]
+);
+\[ScriptCapitalM]d[\[Mu]_, \[Mu]_][i_][a_] := 0
+\[ScriptCapitalM]d[\[Mu]_, \[Nu]_][i_][a_] /; \[Mu] > \[Nu] := -\[ScriptCapitalM]d[\[Nu], \[Mu]][i][a]
+\[ScriptCapitalM]d[\[Mu]_, \[Nu]_][i_][\[Psi][\[Alpha]_]] := - I (
+	+ x[i][\[Nu]] \[Eta][\[Mu], \[Mu]] der[\[Psi][\[Alpha]], x[i][\[Mu]]]
+	- x[i][\[Mu]] \[Eta][\[Nu], \[Nu]] der[\[Psi][\[Alpha]], x[i][\[Nu]]] 
+	- I Sum[MM[\[Mu], \[Nu]][\[Alpha], \[Beta]] \[Psi][\[Beta]], {\[Beta], 2}]
+);
+makeLinear[op_] := (
+	op[i_][a_ + b_] := op[i][a] + op[i][b];
+	op[i_][num_?(FreeQ[#, \[Psi]] &) a_] := num op[i][a];
+	op[i_][der[a_, b_]] := der[op[i][a], b];
+	op[i_][0] := 0;
+);
+makeLinear /@ {\[ScriptCapitalD]d, \[ScriptCapitalP]d[0], \[ScriptCapitalP]d[1], \[ScriptCapitalP]d[2], \[ScriptCapitalK]d[0], \[ScriptCapitalK]d[1], \[ScriptCapitalK]d[2], \[ScriptCapitalM]d[0, 1], \[ScriptCapitalM]d[0, 2], \[ScriptCapitalM]d[1, 2]};
+
+
+comm[op1_, op2_][expr_] := op1[op2[expr]] - op2[op1[expr]]
+
+
+Table[comm[\[ScriptCapitalD]d[1], \[ScriptCapitalP]d[\[Mu]][1]][\[Psi][\[Alpha]]] + I \[ScriptCapitalP]d[\[Mu]][1][\[Psi][\[Alpha]]], {\[Mu], 0, 2}, {\[Alpha], 2}] // Expand //
+	Flatten // DeleteDuplicates
+
+Table[comm[\[ScriptCapitalD]d[1], \[ScriptCapitalK]d[\[Mu]][1]][\[Psi][\[Alpha]]] - I \[ScriptCapitalK]d[\[Mu]][1][\[Psi][\[Alpha]]], {\[Mu], 0, 2}, {\[Alpha], 2}] // Expand //
+	Flatten // DeleteDuplicates
+
+(* This one does not work?!? *)
+Table[comm[\[ScriptCapitalK]d[\[Mu]][1], \[ScriptCapitalP]d[\[Nu]][1]][\[Psi][\[Alpha]]] - 2 I \[Eta][\[Mu], \[Nu]] \[ScriptCapitalD]d[1][\[Psi][\[Alpha]]] + 2 I \[ScriptCapitalM]d[\[Mu], \[Nu]][1][\[Psi][\[Alpha]]]
+, {\[Mu], 0, 2}, {\[Nu], 0, 2}, {\[Alpha], 2}] // Expand //
+	Flatten // DeleteDuplicates
+
+Table[comm[\[ScriptCapitalM]d[\[Mu], \[Nu]][1], \[ScriptCapitalM]d[\[Rho], \[Sigma]][1]][\[Psi][\[Alpha]]] + I (
+	+ \[Eta][\[Nu], \[Rho]] \[ScriptCapitalM]d[\[Mu], \[Sigma]][1][\[Psi][\[Alpha]]] - \[Eta][\[Mu], \[Rho]] \[ScriptCapitalM]d[\[Nu], \[Sigma]][1][\[Psi][\[Alpha]]] 
+	+ \[Eta][\[Mu], \[Sigma]] \[ScriptCapitalM]d[\[Nu], \[Rho]][1][\[Psi][\[Alpha]]] - \[Eta][\[Nu], \[Sigma]] \[ScriptCapitalM]d[\[Mu], \[Rho]][1][\[Psi][\[Alpha]]]
+), {\[Mu], 0, 2}, {\[Nu], 0, 2}, {\[Rho], 0, 2}, {\[Sigma], 0, 2}, {\[Alpha], 2}] // Expand //
+	Flatten // DeleteDuplicates
+
+Table[comm[\[ScriptCapitalM]d[\[Mu], \[Nu]][1], \[ScriptCapitalP]d[\[Rho]][1]][\[Psi][\[Alpha]]] + I (
+	+ \[Eta][\[Nu], \[Rho]] \[ScriptCapitalP]d[\[Mu]][1][\[Psi][\[Alpha]]] - \[Eta][\[Mu], \[Rho]] \[ScriptCapitalP]d[\[Nu]][1][\[Psi][\[Alpha]]]
+), {\[Mu], 0, 2}, {\[Nu], 0, 2}, {\[Rho], 0, 2}, {\[Alpha], 2}] // Expand //
+	Flatten // DeleteDuplicates
+
+Table[comm[\[ScriptCapitalM]d[\[Mu], \[Nu]][1], \[ScriptCapitalK]d[\[Rho]][1]][\[Psi][\[Alpha]]] + I (
+	+ \[Eta][\[Nu], \[Rho]] \[ScriptCapitalK]d[\[Mu]][1][\[Psi][\[Alpha]]] - \[Eta][\[Mu], \[Rho]] \[ScriptCapitalK]d[\[Nu]][1][\[Psi][\[Alpha]]]
+), {\[Mu], 0, 2}, {\[Nu], 0, 2}, {\[Rho], 0, 2}, {\[Alpha], 2}] // Expand //
+	Flatten // DeleteDuplicates
+
+
+actOp[op_, fun_, \[Alpha]_, \[Beta]_] := Module[{\[Alpha]p, \[Beta]p, term1, term2},
+	term1 = (op[1][\[Psi][\[Alpha]]] /. \[Psi][\[Alpha]p_] :> fun[\[Alpha]p, \[Beta]]);
+	term2 = (op[2][\[Psi][\[Beta]]] /. \[Psi][\[Beta]p_] :> fun[\[Alpha], \[Beta]p]);
+	term1 + term2
+];
+
+
+(* ::Subsubsection:: *)
+(*Bulk two-point fun*)
+
+
+x[1, 2][\[Mu]_] := x[1][\[Mu]] - x[2][\[Mu]];
+xSq[1, 2] = Sum[\[Eta][\[Mu], \[Mu]] x[1, 2][\[Mu]]^2, {\[Mu], 0, 2}];
+twoPtFun[\[Alpha]_, \[Beta]_] := (
+	Sum[\[CapitalOmega][\[Beta], \[Sigma]] \[Eta][\[Mu], \[Mu]] x[1, 2][\[Mu]] \[Gamma][\[Mu]][\[Alpha], \[Sigma]], {\[Mu], 0, 2}, {\[Sigma], 2}] / 
+	xSq[1, 2]^((\[CapitalDelta]\[Psi]+1/2))
+);
+
+
+Table[actOp[\[ScriptCapitalP]d[\[Mu]], twoPtFun, \[Alpha], \[Beta]], {\[Mu], 0, 2}, {\[Alpha], 2}, {\[Beta], 2}] // Together
+Table[actOp[\[ScriptCapitalD]d, twoPtFun, \[Alpha], \[Beta]], {\[Alpha], 2}, {\[Beta], 2}] /. \[CapitalDelta][_] :> \[CapitalDelta]\[Psi] // Together
+Table[actOp[\[ScriptCapitalK]d[\[Mu]], twoPtFun, \[Alpha], \[Beta]], {\[Mu], 0, 2}, {\[Alpha], 2}, {\[Beta], 2}] /. \[CapitalDelta][_] :> \[CapitalDelta]\[Psi] // Together
+Table[actOp[\[ScriptCapitalM]d[\[Mu], \[Nu]], twoPtFun, \[Alpha], \[Beta]], {\[Mu], 0, 1}, {\[Nu], \[Mu]+1, 2}, {\[Alpha], 2}, {\[Beta], 2}] /. \[CapitalDelta][_] :> \[CapitalDelta]\[Psi] // Together
+
+
+(* ::Subsubsection:: *)
+(*Bulk-bdy two-point fun*)
+
+
+x[1, 2][\[Mu]_] := x[1][\[Mu]] - x[2][\[Mu]];
+xSq[1, 2] = Sum[\[Eta][\[Mu], \[Mu]] x[1, 2][\[Mu]]^2, {\[Mu], 0, 2}];
+bulkDefTwoPtFun[\[Alpha]_, \[Beta]_] := (
+	Sum[\[CapitalOmega][\[Beta], \[Sigma]] \[Eta][\[Mu], \[Mu]] x[1, 2][\[Mu]] \[Gamma][\[Mu]][\[Alpha], \[Sigma]], {\[Mu], 0, 2}, {\[Sigma], 2}] / (
+	xSq[1, 2]^(\[CapitalDelta][2] + 1/2) x[1][2]^(\[CapitalDelta][1]-\[CapitalDelta][2])
+));
+
+
+Table[actOp[\[ScriptCapitalP]d[\[Mu]], bulkDefTwoPtFun, \[Alpha], \[Beta]], {\[Mu], 0, 1}, {\[Alpha], 2}, {\[Beta], 2}] // Together
+Table[actOp[\[ScriptCapitalD]d, bulkDefTwoPtFun, \[Alpha], \[Beta]], {\[Alpha], 2}, {\[Beta], 2}] // Together
+Table[actOp[\[ScriptCapitalK]d[\[Mu]], bulkDefTwoPtFun, \[Alpha], \[Beta]], {\[Mu], 0, 1}, {\[Alpha], 2}, {\[Beta], 2}] // Together // Factor
+Table[actOp[\[ScriptCapitalM]d[0, 1], bulkDefTwoPtFun, \[Alpha], \[Beta]], {\[Alpha], 2}, {\[Beta], 2}] // Together
+
+
+
