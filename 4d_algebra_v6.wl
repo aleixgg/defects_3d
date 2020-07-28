@@ -1011,6 +1011,8 @@ allCombinations = DeleteDuplicates[Sort /@ allCombinations];
 
 
 
+
+
 (* ::Text:: *)
 (*Map to commutation relations*)
 
@@ -3564,7 +3566,7 @@ Table[
 (*Blocks  \[LeftAngleBracket] \[Phi] Oh Oh \[RightAngleBracket] 3d boundary*)
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*Bosonic blocks*)
 
 
@@ -3594,6 +3596,12 @@ bosBlock[\[CapitalDelta]_, \[CapitalDelta]23_, j_][\[Chi]_] := (
 	Hypergeometric2F1[1/2(\[CapitalDelta] + \[CapitalDelta]23 - j), 1/2(\[CapitalDelta] + \[CapitalDelta]23 + j), \[CapitalDelta], -1/\[Chi]]
 );
 diffEq /. f -> bosBlock[\[CapitalDelta], \[CapitalDelta]23, j] /. c2 -> \[CapitalDelta](\[CapitalDelta]- 2) // Series[#, {\[Chi], Infinity, 10}] &
+
+
+term = pref bosBlock[\[CapitalDelta], \[CapitalDelta]2 - \[CapitalDelta]3, j][\[Chi]v] /. {\[CapitalDelta][1] -> \[CapitalDelta]1, \[CapitalDelta][2] -> \[CapitalDelta]2, \[CapitalDelta][3] -> \[CapitalDelta]3}
+
+
+Sum[D[term, {x[1][\[Mu]], 2}], {\[Mu], 3}] /. \[CapitalDelta]1 -> 1/2 /. \[CapitalDelta] -> 1/2 /. restore\[Chi] // Simplify
 
 
 (* ::Subsubsection::Closed:: *)
