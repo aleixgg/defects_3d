@@ -407,6 +407,7 @@ bulkDefTwoPtFun[\[Alpha]_, \[Beta]_] := (
 ));
 
 
+SetNumeric[k1];
 Table[actOp[\[ScriptCapitalP]d[\[Mu]], bulkDefTwoPtFun, \[Alpha], \[Beta]], {\[Mu], 0, 1}, {\[Alpha], 2}, {\[Beta], 2}] // Together
 Table[actOp[\[ScriptCapitalD]d, bulkDefTwoPtFun, \[Alpha], \[Beta]], {\[Alpha], 2}, {\[Beta], 2}] // Together
 Table[actOp[\[ScriptCapitalK]d[\[Mu]], bulkDefTwoPtFun, \[Alpha], \[Beta]], {\[Mu], 0, 1}, {\[Alpha], 2}, {\[Beta], 2}] // Together // Factor
