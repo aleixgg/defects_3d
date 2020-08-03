@@ -1013,6 +1013,8 @@ allCombinations = DeleteDuplicates[Sort /@ allCombinations];
 
 
 
+
+
 (* ::Text:: *)
 (*Map to commutation relations*)
 
@@ -3604,7 +3606,7 @@ term = pref bosBlock[\[CapitalDelta], \[CapitalDelta]2 - \[CapitalDelta]3, j][\[
 Sum[D[term, {x[1][\[Mu]], 2}], {\[Mu], 3}] /. \[CapitalDelta]1 -> 1/2 /. \[CapitalDelta] -> 1/2 /. restore\[Chi] // Simplify
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*Susy blocks*)
 
 
@@ -3674,6 +3676,9 @@ GD[f_[\[Chi]], a_] := D[f[\[Chi]], \[Chi]] GD[\[Chi]v, a];
 eqs = (\[ScriptCapitalC]2defect[1][pref funs] - c2 pref funs) / pref // GExpand // CollectCD;
 
 
+eqs
+
+
 eqs = x[1][3] / y[1][3] eqs /. r[1] -> \[CapitalDelta][1] // CollectCD[#, Factor] &;
 eqs = eqs /. restoreY // GExpand // joinCD // CollectCD[#, Factor] &;
 eqs = % /. \[Theta]p[1][1]\[CenterDot]\[Theta]p[1][2] -> inv y[1][3] /. restore\[Chi] // 
@@ -3708,6 +3713,26 @@ neqs /. {
 } //. {
 	a[3] -> -a[1] (\[CapitalDelta]-\[CapitalDelta][1]),
 	a[4] -> a[2] (-1+\[CapitalDelta]+\[CapitalDelta][1])
+} // Series[#, {\[Chi], \[Infinity], 10}] &
+
+
+bosBlock[\[CapitalDelta]_, \[CapitalDelta]23_, j_][\[Chi]_] := (
+	\[Chi]^(-1/2(\[CapitalDelta]+\[CapitalDelta]23)) 
+	Hypergeometric2F1[1/2(\[CapitalDelta]+\[CapitalDelta]23-j), 1/2(\[CapitalDelta]+\[CapitalDelta]23+j), \[CapitalDelta], -1/\[Chi]]
+);
+neqs /. {
+	f[1] -> (
+		+   bosBlock[\[CapitalDelta],   \[CapitalDelta][2]-\[CapitalDelta][3], j][#]
+		+ a bosBlock[\[CapitalDelta]+1, \[CapitalDelta][2]-\[CapitalDelta][3], j][#]
+	&),
+	f[2] -> (
+		+ a[3] bosBlock[\[CapitalDelta],   \[CapitalDelta][2]-\[CapitalDelta][3], j][#]
+		+ a[4] bosBlock[\[CapitalDelta]+1, \[CapitalDelta][2]-\[CapitalDelta][3], j][#]
+	&),
+	c2 -> \[CapitalDelta](\[CapitalDelta]-1)
+} //. {
+	a[3] -> - (\[CapitalDelta]-\[CapitalDelta][1]),
+	a[4] -> a (-1+\[CapitalDelta]+\[CapitalDelta][1])
 } // Series[#, {\[Chi], \[Infinity], 10}] &
 
 
@@ -3862,7 +3887,7 @@ neqs /. {
 (*Line, two pt fun defect blocks*)
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Define distances*)
 
 
@@ -4123,7 +4148,7 @@ casEq - casEqAns // Collect[#, f_[\[Eta], \[Chi]], CollectCD[#, Simplify] &] &
 (*\[LeftAngleBracket] \[Phi] Oh \[RightAngleBracket] 3d boundary*)
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*Susy blocks*)
 
 
