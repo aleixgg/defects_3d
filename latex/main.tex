@@ -1439,6 +1439,8 @@ Any comments/ideas are appreciated!
  \{ A, [B, C] \} = - \{ B, [A, C] \}  + [ \{A, B \}, C], \\
 \end{align}
 
+\subsection{Sending points to infinity}
+
 (In conventions of DSD Tasi) If we use $e^{\frac{K \cdot x}{x^2}}$ we can send $\Om(x) \to \Om(\infty)$. Then we can get Ward identities using
 \begin{align}
  & [D, \Om(\infty)] = -\Delta \Om(\infty), \\
@@ -1473,5 +1475,38 @@ Noting that $R^\mu_{\ph \mu\nu}(0) = \delta^\mu_\nu$ we can also reconstruct the
  = \frac{x^{\mu_1} \ldots x^{\mu_\ell} }{|x|^{\Delta_1 + \Delta_2 - \Delta_3 + \ell}}
 \end{align}
 The case when $I^\mu_{\ph \mu\nu}(x)$ appears seems more subtle, because it is not clear how to send this factor to infinity.
+
+\subsection{From four to three point function}
+
+Naively we get
+\begin{align}
+\begin{split}
+  \langle \phi_1(x_1) \phi_2(x_2) \phi_3(x_3) \rangle
+& = \langle \phi_1(x_1) \phi_2(x_2) \phi_3(x_3) \mathds{1}(x_4) \rangle \\
+& = \frac{u^{-\Delta_3/2} v^{(\Delta_3-\Delta_{12})/2} F(u, v)}{
+      |x_{12}|^{\Delta_1+\Delta_2-\Delta_3}
+      |x_{13}|^{\Delta_1+\Delta_3-\Delta_3}
+      |x_{23}|^{\Delta_2+\Delta_3-\Delta_3}
+    }.
+\end{split}
+\end{align}
+But now the conformal block expansion has only one term, which happens to cancel the leftover $u,v$ dependence 
+\begin{align}
+\begin{split}
+ u^{-\Delta_3/2} v^{(\Delta_3-\Delta_{12})/2} F(u, v)
+ & = u^{-\Delta_3/2} v^{(\Delta_3-\Delta_{12})/2} \sum_\Om \lambda_{12\Om}   
+     \lambda_{3\mathds{1}\Om} g_{\Delta, \ell}^{\Delta_{12}, \Delta_3}(u, v) \\
+ & = \lambda_{123} \, u^{-\Delta_3/2} v^{(\Delta_3-\Delta_{12})/2} 
+     g_{\Delta_3, 0}^{\Delta_{12}, \Delta_3}(u, v) \\
+ & = \lambda_{123}.
+\end{split}
+\end{align}
+This works thanks to the identity
+\begin{align}
+ g_{\Delta_3, 0}^{\Delta_{12}, \Delta_3}(u, v) 
+ = u^{\Delta_3/2} v^{-(\Delta_3-\Delta_{12})/2},
+\end{align}
+which can be checked explicitly in $2d$ and $4d$ using ${}_2F_1$ identities.
+
 
 \end{document}
