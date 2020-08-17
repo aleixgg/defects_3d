@@ -1262,6 +1262,7 @@ The bosonic one is clear, and taking same conventions as Lauria, Liendo and frie
 For the nilpotent ones we can use $\theta^{\ad+}$, but $M_{12}$ invariance requires the free index is contracted, so there is only one invariant.
 All in all
 \begin{align}
+\label{eq:corr-POJO}
  \langle \phi(x, \theta) \hat \Om^{(j)}(0, w) \hat \Om(\infty) \rangle
  = \frac{(\hat y_a w^a)^{j}}{|y^3|^{\Delta_\phi + \Delta_2 - \Delta_3}} \left(
    f_1(\chi)
@@ -1279,6 +1280,7 @@ To get the contributions from descendants, notice that a chiral field is expande
 \end{align}
 So clearly the functions $f_i(\hat \chi)$ already capture the blocks of the descendants:
 \begin{align}
+\label{eq:map-structs}
  & f_1(\hat \chi) \sim \langle \phi \hat \Om \hat \Om \rangle, \\
  & f_2(\hat \chi) \sim \langle \rho \hat \Om \hat \Om \rangle.
 \end{align}
@@ -1316,6 +1318,32 @@ where the bosonic blocks are
     -\frac{1}{\chi}
    \right).
 \end{align}
+
+\subsubsection{Equations of motion}
+
+Now we impose the EOM of the chiral field. They will require
+\begin{align}
+ (D^{-})^2 \phi(z) = 0 \quad \Rightarrow \quad
+ \partial^2 \phi = 0, \qquad
+ \partial^{\a\b} \psi_\b = 0, \qquad
+ \rho = 0,
+\end{align}
+and $\Delta_\phi = 1/2$. Acting with the EOM on \eqref{eq:corr-POJO} we get:
+\begin{align}
+\begin{split}
+ -8 \chi  (\Delta_{23} \chi +2 \chi +1) f_1'(\chi )+\frac{1}{2} f_1(\chi ) \left(-4 \Delta_{23}^2 \chi -8 \Delta_{23} \chi +4 j^2-3 \chi \right)-8 (\chi +1) \chi ^2 f_1''(\chi ) = 0, \\
+ f_2(\chi) = 0.
+\end{split}
+\end{align}
+We get that $f_2(\chi) = 0$, which is a consequence of $\rho = 0$ (see \eqref{eq:map-structs}). 
+The differential equation can be solved in terms of two conformal blocks:
+\begin{align}
+ f_1(\chi) 
+ = \lambda_{\hat \phi \hat \Om^{(j)} \hat \Om} f_{\hat \Delta = 1/2}(\chi)
+ + \lambda_{\partial_\bot \hat \phi \hat \Om^{(j)} \hat \Om} f_{\hat \Delta = 3/2}(\chi).
+\end{align}
+The exchanged operator can have $\Delta = 1/2, 3/2$, so $f_1(\chi)$ is determined up to two OPE coefficients, which correspond to the exchange of $\hat \phi$ and $\partial_\bot \hat \phi$.
+
 
 \subsection{Line \texorpdfstring{$3d \; \langle \phi \hat O \hat O \rangle$}{} }
 

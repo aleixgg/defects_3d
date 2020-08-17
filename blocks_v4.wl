@@ -153,10 +153,11 @@ x /: \[Eta][\[Mu]_, \[Nu]_ia] x[i_][\[Nu]_ia] := x[i][\[Mu]]
 x /: \[Eta][\[Mu]_id, \[Nu]_id] x[i_][\[Nu]_id] := x[i][\[Mu]]
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*Boundary channel*)
 
 
+Clear[\[ScriptCapitalC]2def]
 \[ScriptCapitalC]2def[i__][expr_] := With[{\[Mu] = get$id, \[Nu] = get$id}, 
 	\[ScriptCapitalD]d[i][\[ScriptCapitalD]d[i][expr]]
 	- 1/2 (\[ScriptCapitalP]d[\[Mu]][i][\[ScriptCapitalK]d[\[Mu]][i][expr]] + \[ScriptCapitalK]d[\[Mu]][i][\[ScriptCapitalP]d[\[Mu]][i][expr]])
@@ -175,11 +176,11 @@ expr = f[\[Xi]] expr /. restore\[Xi] // Collect[#, f_[\[Xi]], Factor] &
 expr /. f -> defBlock[\[CapitalDelta], d] // FullSimplify
 
 
-(* ::Subsubsection::Closed:: *)
+(* ::Subsubsection:: *)
 (*Bulk channel*)
 
 
-Clear[\[ScriptCapitalC]2bulk, \[ScriptCapitalC]2def]
+Clear[\[ScriptCapitalC]2bulk]
 \[ScriptCapitalC]2bulk[i__][expr_] := With[{\[Mu] = get$ia, \[Nu] = get$ia}, 
 	\[ScriptCapitalD]d[i][\[ScriptCapitalD]d[i][expr]]
 	- 1/2 (\[ScriptCapitalP]d[\[Mu]][i][\[ScriptCapitalK]d[\[Mu]][i][expr]] + \[ScriptCapitalK]d[\[Mu]][i][\[ScriptCapitalP]d[\[Mu]][i][expr]])
